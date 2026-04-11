@@ -1,0 +1,228 @@
+.munchkin-cat {
+  position: absolute;
+  bottom: 12%; 
+  left: 25%; /* Sofa position */
+  z-index: 20;
+  width: 120px;
+  height: 80px;
+  transition: transform 3s ease-in-out, bottom 3s ease-in-out;
+}
+
+.cat-body {
+  width: 100px;
+  height: 55px;
+  background: #ffdbbb; /* Cute Peach */
+  border-radius: 45px;
+  position: absolute;
+  bottom: 15px;
+  left: 10px;
+  /* 3D Volumetric Shading */
+  box-shadow: inset -15px -15px 25px rgba(200, 140, 100, 0.4), 
+              inset 5px 5px 15px rgba(255, 255, 255, 0.6),
+              5px 15px 15px rgba(0,0,0,0.2);
+}
+.cat-body::after {
+  /* Cute Tabby stripes rounded */
+  content: '';
+  position: absolute;
+  top: 0; left: 20%;
+  width: 60%; height: 100%;
+  background: repeating-linear-gradient(90deg, transparent, transparent 15px, rgba(160, 120, 100, 0.15) 15px, rgba(160, 120, 100, 0.15) 22px);
+  border-radius: 40px;
+  pointer-events: none;
+}
+
+.cat-head {
+  width: 55px;
+  height: 50px;
+  background: #ffdbbb;
+  border-radius: 50%;
+  position: absolute;
+  top: -12px;
+  right: -15px;
+  /* 3D Volumetric Shading */
+  box-shadow: inset -10px -10px 15px rgba(200, 140, 100, 0.4),
+              inset 5px 5px 10px rgba(255, 255, 255, 0.6),
+              4px 8px 10px rgba(0,0,0,0.2);
+  transition: transform 0.5s ease;
+  z-index: 3;
+}
+
+.cat-ear {
+  width: 18px;
+  height: 18px;
+  background: #ffdbbb;
+  position: absolute;
+  top: -5px;
+  border-radius: 4px 10px 0 0;
+  box-shadow: inset -3px -3px 5px rgba(200, 140, 100, 0.4);
+}
+.cat-ear::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 4px;
+  width: 8px; height: 10px;
+  background: #ffb6c1;
+  border-radius: 50%;
+  opacity: 0.6;
+}
+.ear-l { left: 4px; transform: rotate(-25deg); }
+.ear-r { right: 4px; transform: rotate(25deg); }
+
+.cat-eye {
+  width: 10px;
+  height: 10px;
+  background: #333;
+  border-radius: 50%;
+  position: absolute;
+  top: 20px;
+}
+/* Anime/3D Catchlights */
+.cat-eye::after {
+  content: '';
+  position: absolute;
+  top: 1px; left: 1px;
+  width: 4px; height: 4px;
+  background: white;
+  border-radius: 50%;
+}
+.eye-l { left: 12px; }
+.eye-r { right: 12px; }
+
+.cat-nose {
+  width: 8px;
+  height: 5px;
+  background: #ff8c9d;
+  border-radius: 50%;
+  position: absolute;
+  top: 26px;
+  left: 20px;
+}
+
+.cat-leg {
+  width: 16px;
+  height: 22px;
+  background: #f0c5a3;
+  border-radius: 8px;
+  position: absolute;
+  bottom: -15px;
+  box-shadow: inset -3px -3px 6px rgba(200, 140, 100, 0.5);
+}
+.leg-fl { right: 15px; z-index: 4; background: #ffdbbb; }
+.leg-fr { right: 32px; z-index: 1; filter: brightness(0.85); }
+.leg-bl { left: 15px; z-index: 4; background: #ffdbbb; }
+.leg-br { left: 32px; z-index: 1; filter: brightness(0.85); }
+
+.cat-tail {
+  width: 45px;
+  height: 16px;
+  background: #ffdbbb;
+  border-radius: 10px;
+  position: absolute;
+  left: -20px;
+  top: -5px;
+  transform-origin: right center;
+  box-shadow: inset -5px -5px 10px rgba(200, 140, 100, 0.4);
+  animation: tailSway 4s infinite ease-in-out;
+}
+
+@keyframes tailSway {
+  0%, 100% { transform: rotate(10deg); }
+  50% { transform: rotate(-20deg); }
+}
+
+/* STATES */
+
+.cat-idle {
+  /* Curled up */
+  transform: translateX(0);
+}
+.cat-idle .cat-head { transform: translateY(15px) rotate(-90deg) translateX(-15px); }
+.cat-idle .cat-eye { height: 2px; top: 22px;}
+.cat-idle .cat-leg { bottom: -5px; height: 10px; transform: rotate(90deg); }
+
+.cat-zzz {
+  position: absolute;
+  top: -20px; right: 0px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  color: var(--text-dark);
+  font-size: 14px;
+  animation: floatZ 3s infinite;
+}
+@keyframes floatZ {
+  0% { opacity: 0; transform: translateY(0) scale(0.8); }
+  50% { opacity: 1; transform: translateY(-20px) scale(1); }
+  100% { opacity: 0; transform: translateY(-40px) scale(1.2); }
+}
+
+.cat-walking {
+  transform: translateX(25vw); /* Move to the cabinet base */
+  bottom: 12%;
+}
+.cat-walking .cat-leg {
+  animation: waddle 0.3s infinite alternate;
+}
+.cat-walking .leg-fl, .cat-walking .leg-bl { animation-delay: 0.3s; }
+
+@keyframes waddle {
+  to { transform: rotate(40deg) translateY(-8px); }
+}
+
+.cat-climbing {
+  transform: translateX(35vw) rotate(-60deg); 
+  bottom: 50%; /* Climb up the cabinet wall */
+  transition: transform 2s ease-in-out, bottom 2s ease-in-out;
+}
+.cat-climbing .cat-leg {
+  animation: waddle 0.2s infinite alternate;
+}
+
+.cat-watching, .cat-tapping {
+  /* Sitting on top of the cabinet edge looking into the tank */
+  transform: translateX(35vw);
+  bottom: 60%;
+}
+.cat-watching .cat-head {
+  animation: tiltWatch 2s infinite;
+}
+.cat-watching .cat-eye { height: 14px; top: 18px; border-radius: 50%; }
+
+@keyframes tiltWatch {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(15deg); }
+}
+
+.cat-tapping .leg-fl {
+  /* Reach down to tap glass */
+  height: 50px;
+  bottom: -15px;
+  right: -25px;
+  transform: rotate(110deg);
+  animation: tapGlass 0.4s infinite;
+  z-index: 10;
+}
+
+@keyframes tapGlass {
+  0% { transform: rotate(110deg) translateX(0); }
+  50% { transform: rotate(110deg) translateX(20px); }
+  100% { transform: rotate(110deg) translateX(0); }
+}
+
+.cat-climbing_down {
+  transform: translateX(30vw) rotate(30deg); 
+  bottom: 12%; 
+  transition: transform 2s ease-in-out, bottom 2s ease-in-out;
+}
+.cat-climbing_down .cat-leg {
+  animation: waddle 0.2s infinite alternate;
+}
+
+.cat-returning {
+  transform: translateX(0) scaleX(-1); /* Walk back */
+  bottom: 12%;
+  transition: transform 3s linear;
+}
+.cat-returning .cat-leg {
+  animation: waddle 0.3s infinite alternate;
+}

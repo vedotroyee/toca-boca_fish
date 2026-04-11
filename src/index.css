@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+  /* Day Mode Colours */
+  --wall-color: #f0ebd8; /* soft off-white/sage warm */
+  --floor-color: #d1a57c; /* warm honey wood */
+  --sofa-color: #d18274; /* soft dusty terracotta */
+  --carpet-color: #cbb8a2; /* jute rug */
+  --cabinet-color: #8c6a51; /* wood tone for tank stand */
+  --wood-accent: #6b4d3a;
+  
+  --shadow-color: rgba(30, 45, 65, 0.1);
+  --ambient-light: rgba(255, 235, 160, 0.6); /* soft yellow glow */
+  --lamp-color: #fff4d1; 
+  --tank-glow: rgba(143, 224, 231, 0.4);
+  
+  --text-dark: #3e505b;
+  --text-light: #ffffff;
+  --panel-bg: rgba(255, 255, 255, 0.95);
+}
+
+body.night-mode {
+  /* Night Mode Colours */
+  --wall-color: #2a3138;
+  --floor-color: #433932;
+  --sofa-color: #5c3c39;
+  --carpet-color: #4a453e;
+  --cabinet-color: #2b2018;
+  --wood-accent: #17110c;
+  
+  --shadow-color: rgba(0, 0, 0, 0.4);
+  --ambient-light: rgba(255, 200, 100, 0.3); /* warmer soft yellow for night */
+  --lamp-color: #ffd27a;
+  --tank-glow: rgba(70, 171, 191, 0.7);
+  
+  --text-dark: #e1e8ed;
+  --panel-bg: rgba(30, 40, 50, 0.95);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--wall-color);
+  color: var(--text-dark);
+  overflow: hidden; /* Full desktop replacement */
+  user-select: none; 
+  transition: all 1s ease-in-out;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+}
+
+button {
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  border: none;
+  font-weight: 600;
+  transition: transform 0.1s ease, filter 0.2s;
+}
+
+button:active {
+  transform: scale(0.95);
+}
