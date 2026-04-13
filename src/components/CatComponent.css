@@ -226,3 +226,36 @@
 .cat-returning .cat-leg {
   animation: waddle 0.3s infinite alternate;
 }
+
+/* Surprise state */
+.cat-surprised {
+  transform: translateX(0); /* Same as idle position */
+}
+.cat-surprised .cat-head { 
+    transform: translateY(-10px) rotate(-10deg); 
+}
+.cat-surprised .cat-eye { 
+    height: 18px; 
+    top: 14px; 
+    border-radius: 50%; 
+}
+.cat-surprised .cat-ear { 
+    transform: translateY(-3px) rotate(0deg); 
+} /* ears perk straight up */
+
+.cat-exclamation {
+  position: absolute;
+  top: -30px;
+  right: -5px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  color: #ff6b6b;
+  font-size: 28px;
+  text-shadow: 2px 2px 0px white;
+  animation: popMark 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popMark {
+  0% { transform: scale(0) rotate(-20deg); top: -10px; }
+  100% { transform: scale(1) rotate(10deg); top: -40px; }
+}

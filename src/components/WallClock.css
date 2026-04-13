@@ -1,0 +1,287 @@
+.wall-clock-wrapper {
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  /* To the left of the aquarium */
+  width: 140px;
+  height: 140px;
+  z-index: 5;
+  filter: drop-shadow(0 15px 15px rgba(0, 0, 0, 0.1));
+  transition: all 1s ease;
+}
+
+/* Pendulum */
+.pendulum {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform-origin: top center;
+  transform: translateX(-50%);
+  animation: swing 2s ease-in-out infinite alternate;
+  z-index: -1;
+}
+
+.pendulum-arm {
+  width: 4px;
+  height: 60px;
+  background: #c39a6b;
+  margin: 0 auto;
+}
+
+.pendulum-bob {
+  width: 24px;
+  height: 24px;
+  background: #e5b17a;
+  border-radius: 50%;
+  box-shadow: inset -2px -2px 5px rgba(0, 0, 0, 0.1);
+  margin-left: -10px;
+  /* center relative to 4px arm */
+}
+
+@keyframes swing {
+  0% {
+    transform: translateX(-50%) rotate(-10deg);
+  }
+
+  100% {
+    transform: translateX(-50%) rotate(10deg);
+  }
+}
+
+/* Main Clock Body */
+.clock-rim {
+  width: 100%;
+  height: 100%;
+  background: #e5c39c;
+  /* Honey oak / warm cream */
+  border-radius: 50%;
+  padding: 10px;
+  box-shadow:
+    inset 2px 2px 5px rgba(255, 255, 255, 0.5),
+    inset -4px -4px 10px rgba(139, 90, 43, 0.2);
+}
+
+.clock-face {
+  width: 100%;
+  height: 100%;
+  background: #fffdf5;
+  /* Pale cream */
+  border-radius: 50%;
+  position: relative;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.03);
+}
+
+/* Paw Print Markers */
+.clock-marker-container {
+  position: absolute;
+  width: 10px;
+  height: 100%;
+  left: 50%;
+  margin-left: -5px;
+  top: 0;
+}
+
+.paw-marker {
+  position: absolute;
+  top: 6px;
+  width: 100%;
+  height: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.paw-marker .toe {
+  width: 3px;
+  height: 4px;
+  background: #e51b62;
+  /* Dusty rose ink */
+  border-radius: 50%;
+  position: absolute;
+}
+
+.paw-marker .toe-1 {
+  top: 0;
+  left: 1px;
+  transform: rotate(-20deg);
+}
+
+.paw-marker .toe-2 {
+  top: -1px;
+  left: 4px;
+}
+
+.paw-marker .toe-3 {
+  top: 0;
+  left: 7px;
+  transform: rotate(20deg);
+}
+
+.paw-marker .pad {
+  width: 8px;
+  height: 6px;
+  background: #e0462e;
+  border-radius: 50% 50% 40% 40%;
+  margin-top: 6px;
+}
+
+/* Center Sleeping Cat */
+.cat-center-face {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 30px;
+}
+
+.closed-eye {
+  width: 10px;
+  height: 5px;
+  border: 2px solid transparent;
+  border-bottom-color: #79685a;
+  /* warm gray/brown */
+  border-radius: 50%;
+  position: absolute;
+  top: 5px;
+}
+
+.eye-left {
+  left: 4px;
+}
+
+.eye-right {
+  right: 4px;
+}
+
+.pink-nose {
+  width: 6px;
+  height: 4px;
+  background: #f19b9b;
+  border-radius: 50% 50% 50% 50%;
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Digital Readout */
+.digital-readout {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(220, 205, 185, 0.4);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  color: #79685a;
+  letter-spacing: 0.5px;
+}
+
+/* Hands Base */
+.clock-hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform-origin: bottom center;
+  border-radius: 4px;
+}
+
+/* Cat Tail Hands */
+.hour-hand {
+  width: 4px;
+  height: 25px;
+  background: #50443a;
+  /* Deep warm brown */
+  margin-left: -2px;
+  border-radius: 4px 4px 0 0;
+}
+
+/* taper the tail */
+.hour-hand::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 4px;
+  height: 8px;
+  background: inherit;
+  border-radius: 50%;
+  transform: rotate(20deg) translateX(1px);
+}
+
+.min-hand {
+  width: 3px;
+  height: 40px;
+  background: #5c4f44;
+  margin-left: -1.5px;
+  border-radius: 3px 3px 0 0;
+}
+
+.min-hand::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 0;
+  width: 3px;
+  height: 8px;
+  background: inherit;
+  border-radius: 50%;
+  transform: rotate(-15deg) translateX(-1px);
+}
+
+.sec-hand {
+  width: 1px;
+  height: 45px;
+  background: #ef8b8b;
+  /* thin coral pink */
+  margin-left: -0.5px;
+  transition: transform 0.1s cubic-bezier(0.4, 2.08, 0.55, 0.44);
+  /* smooth sweep */
+}
+
+/* a tiny pink dot on the tail tip */
+.sec-hand::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -1px;
+  width: 3px;
+  height: 3px;
+  background: inherit;
+  border-radius: 50%;
+}
+
+.center-pin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: #d4a373;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid #50443a;
+  z-index: 10;
+}
+
+/* Night Mode Effects */
+.clock-night .clock-face {
+  background: #dcd0cd;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.clock-night .paw-marker .toe,
+.clock-night .paw-marker .pad {
+  background: #ffd5d5;
+  box-shadow: 0 0 6px rgba(255, 180, 180, 0.8);
+  /* faint glow */
+}
+
+.clock-night .digital-readout {
+  color: #5c4f44;
+  background: rgba(250, 240, 240, 0.3);
+}

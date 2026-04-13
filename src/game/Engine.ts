@@ -62,8 +62,15 @@ export class Engine {
   initEvents() {
     window.addEventListener('aquarium:add_fish', ((e: CustomEvent) => {
       if (this.fishes.length >= 10) return;
-      // We will implement factory logic in Fish.ts
       this.fishes.push(new Fish(Math.random() * this.width, Math.random() * this.height, this.fishes.length, e.detail.type));
+    }) as EventListener);
+
+    window.addEventListener('aquarium:add_timer_fish', ((e: CustomEvent) => {
+      // Timer fish have no maximum limit!
+      this.fishes.push(new Fish(0, Math.random() * (this.height - 100) + 50, this.fishes.length, e.detail.type, true));
+      window.dispatchEvent(new Event('aquarium:cat_notice'));
+      audio.init();
+      audio.playChime();
     }) as EventListener);
 
     window.addEventListener('aquarium:cat_tap', () => {

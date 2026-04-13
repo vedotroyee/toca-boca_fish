@@ -32,12 +32,24 @@ export class Fish {
   numSegments: number = 5;
   segmentHistory: Vector2[] = [];
 
-  constructor(x: number, y: number, id: number, type: string = 'Clownfish') {
-    this.position = new Vector2(x, y);
-    this.velocity = new Vector2(Math.random() * 2 - 1, Math.random() * 2 - 1).setMag(2);
+  // Timer Focus Arrival
+  isArrival: boolean = false;
+  arrivalTime: number = 0;
+
+  constructor(x: number, y: number, id: number, type: string = 'Clownfish', isTimerFish: boolean = false) {
     this.acceleration = new Vector2();
     this.id = id;
     this.type = type;
+    
+    if (isTimerFish) {
+       this.position = new Vector2(-this.size * 2, y); // start off screen left
+       this.velocity = new Vector2(2, 0); // straight right
+       this.isArrival = true;
+       this.arrivalTime = performance.now();
+    } else {
+       this.position = new Vector2(x, y);
+       this.velocity = new Vector2(Math.random() * 2 - 1, Math.random() * 2 - 1).setMag(2);
+    }
     
     this.initType(type);
 
@@ -121,6 +133,18 @@ export class Fish {
   }
 
   update() {
+    if (this.isArrival) {
+       // Swim straight in gracefully
+       if (performance.now() - this.arrivalTime < 2000) {
+           this.velocity.setMag(1.2);
+       } else {
+           this.isArrival = false; // Normal behaviour resumes
+       }
+       this.position.add(this.velocity);
+       this.updateSegments();
+       return;
+    }
+
     this.velocity.add(this.acceleration);
     this.velocity.limit(this.maxSpeed);
     this.position.add(this.velocity);
@@ -384,6 +408,10 @@ export class Fish {
 
     this.drawHungerState(ctx);
 
+    if (this.isArrival) {
+        this.drawArrivalEffects(ctx);
+    }
+
     ctx.restore();
   }
 
@@ -481,5 +509,80 @@ export class Fish {
         ctx.fillText('❤', 0, 0);
         ctx.restore();
     }
+  }
+
+  drawArrivalEffects(ctx: CanvasRenderingContext2D) {
+      const timeElapsed = performance.now() - this.arrivalTime;
+      
+      // Sparkles burst for first 1 second
+      if (timeElapsed < 1000) {
+          ctx.save();
+          // We must undo rotation from Fish's main draw if it was rotated, but drawArrivalEffects 
+          // is called from inside fish's ctx.restore state? No, we called it inside draw, but after restore? 
+          // Wait, draw() saves then does stuff. At the end it restores. Oh, I put drawArrivalEffects BEFORE ctx.restore().
+          // Wait, no, the main draw() does ctx.save() at the start.
+          // Let's just translate to position here, but without the segment's rotation.
+          ctx.restore(); // pop the main draw's save first
+          
+          ctx.save();
+          ctx.translate(this.position.x, this.position.y);
+          
+          for(let i=0; i<4; i++) {
+              const angle = (Math.PI * 2 / 4) * i + timeElapsed * 0.005;
+              const dist = 20 + (timeElapsed / 1000) * 30; // expand outwards
+              const opacity = 1 - (timeElapsed / 1000);
+              ctx.globalAlpha = opacity;
+              
+              ctx.fillStyle = '#00d2d3'; // teal
+              ctx.beginPath();
+              ctx.arc(Math.cos(angle) * dist, Math.sin(angle) * dist, 3, 0, Math.PI*2);
+              ctx.fill();
+              
+              ctx.fillStyle = '#feca57'; // gold
+              ctx.beginPath();
+              ctx.arc(Math.cos(angle + 0.5) * dist * 0.8, Math.sin(angle + 0.5) * dist * 0.8, 2, 0, Math.PI*2);
+              ctx.fill();
+          }
+          ctx.restore();
+          
+          // Re-save to balance the restore at the very end of draw()
+          ctx.save(); 
+      }
+
+      // Speech bubble "Hi!" or species name
+      // Floats above for 2 seconds
+      if (timeElapsed < 2000) {
+          const opacity = timeElapsed < 1500 ? 1 : 1 - ((timeElapsed - 1500) / 500);
+          
+          ctx.restore(); // pop the main draw's save
+          ctx.save();
+          ctx.globalAlpha = opacity;
+          ctx.translate(this.position.x, this.position.y - this.size * 2 - 15);
+          
+          // Bubble tail
+          ctx.fillStyle = '#fff';
+          ctx.beginPath();
+          ctx.moveTo(0, 5);
+          ctx.lineTo(-5, -5);
+          ctx.lineTo(5, -5);
+          ctx.fill();
+          
+          // Bubble body (pill shape)
+          const text = "Hi!";
+          ctx.font = 'bold 12px Nunito, sans-serif';
+          const textWidth = ctx.measureText(text).width;
+          const pad = 8;
+          ctx.beginPath();
+          ctx.ellipse(0, -15, textWidth/2 + pad, 12, 0, 0, Math.PI * 2);
+          ctx.fill();
+          
+          ctx.fillStyle = '#5c4f44';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(text, 0, -14);
+          
+          ctx.restore();
+          ctx.save(); // keep balanced
+      }
   }
 }

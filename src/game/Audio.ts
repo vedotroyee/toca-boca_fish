@@ -2,6 +2,7 @@ export class AudioEngine {
   ctx: AudioContext | null = null;
   masterGain: GainNode | null = null;
   ambienceGain: GainNode | null = null;
+  meowBuffer: AudioBuffer | null = null;
 
   init() {
     if (this.ctx) return;
@@ -9,6 +10,15 @@ export class AudioEngine {
     this.masterGain = this.ctx.createGain();
     this.masterGain.connect(this.ctx.destination);
     this.masterGain.gain.value = 0.5;
+
+    // Load custom meow sound
+    fetch('/cat-meow.mp3')
+      .then(response => response.arrayBuffer())
+      .then(data => this.ctx?.decodeAudioData(data))
+      .then(buffer => {
+        if (buffer) this.meowBuffer = buffer;
+      })
+      .catch(console.error);
 
     // Start background ambience
     this._startAmbience();
@@ -18,20 +28,26 @@ export class AudioEngine {
     if (!this.ctx || !this.masterGain) return;
     const osc = this.ctx.createOscillator();
     osc.type = 'sine';
-    osc.frequency.value = 60; // low rumble hum
+    osc.frequency.value = 150; // soft higher hum
 
     const lfo = this.ctx.createOscillator();
     lfo.type = 'sine';
-    lfo.frequency.value = 0.2; // very slow wave
+    lfo.frequency.value = 0.5; // slow ocean wave
     const lfoGain = this.ctx.createGain();
     lfoGain.gain.value = 15;
     lfo.connect(lfoGain);
     lfoGain.connect(osc.frequency);
 
     this.ambienceGain = this.ctx.createGain();
-    this.ambienceGain.gain.value = 0.5; // default volume
+    this.ambienceGain.gain.value = 0.05; // default volume very low to avoid buzzing
     
-    osc.connect(this.ambienceGain);
+    // Add lowpass filter to make it sound like underwater pressure instead of a pure tone
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 400;
+
+    osc.connect(filter);
+    filter.connect(this.ambienceGain);
     this.ambienceGain.connect(this.masterGain);
     
     lfo.start();
@@ -124,34 +140,50 @@ export class AudioEngine {
   }
 
   playMeow() {
-    if (!this.ctx || !this.masterGain) return;
-    const osc = this.ctx.createOscillator();
+    if (!this.ctx || !this.masterGain || !this.meowBuffer) return;
+    
+    const source = this.ctx.createBufferSource();
+    source.buffer = this.meowBuffer;
+    
+    // Add a little gain so it's clearly heard
     const gain = this.ctx.createGain();
-
-    // Sweeping frequency that sounds like "meoooow"
-    const now = this.ctx.currentTime;
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(800, now);
-    osc.frequency.exponentialRampToValueAtTime(300, now + 0.6);
-
-    // Filter to make it sound nasal/animalistic
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(1000, now);
-    filter.frequency.linearRampToValueAtTime(500, now + 0.6);
-    filter.Q.value = 5;
-
-    osc.connect(filter);
-    filter.connect(gain);
+    gain.gain.value = 1.0;
+    
+    source.connect(gain);
     gain.connect(this.masterGain);
+    
+    source.start();
+  }
 
-    // Envelope for the "mew" shape (attack-decay)
-    gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(0.4, now + 0.1); // Attack
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6); // Fade out
-
-    osc.start(now);
-    osc.stop(now + 0.6);
+  playChime() {
+    if (!this.ctx || !this.masterGain) return;
+    
+    // Play a lovely music-box ding / arpeggio
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+    
+    notes.forEach((freq, i) => {
+        // Need non-null assertion since we checked above
+        const ctx = this.ctx!;
+        const master = this.masterGain!;
+        
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        
+        const startTime = ctx.currentTime + i * 0.08;
+        
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.3, startTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.01, startTime + 1.5);
+        
+        osc.connect(gain);
+        gain.connect(master);
+        
+        osc.start(startTime);
+        osc.stop(startTime + 1.6);
+    });
   }
 }
 

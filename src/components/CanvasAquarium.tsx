@@ -19,9 +19,7 @@ const CanvasAquarium: React.FC = () => {
       newEngine.dropFood();
     };
 
-    const handleCat = () => {
-      newEngine.triggerCat(); // Note: the cat sequence now uses DOM and throws aquarium:cat_tap later
-    };
+
 
     const handleVolume = ((e: CustomEvent) => {
         import('../game/Audio').then(({audio}) => {

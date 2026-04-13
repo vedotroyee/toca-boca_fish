@@ -3,6 +3,7 @@ import './LivingRoom.css';
 import CanvasAquarium from './CanvasAquarium';
 import ControlPanel from './ControlPanel';
 import CatComponent from './CatComponent';
+import WallClock from './WallClock';
 
 const LivingRoom: React.FC = () => {
   const [isNight, setIsNight] = useState(false);
@@ -19,16 +20,17 @@ const LivingRoom: React.FC = () => {
     <div className="living-room">
       {/* Background Layer */}
       <div className="room-wall">
+        <WallClock isNight={isNight} />
         {/* Subtle texture via CSS */}
         <div className="wall-quotes">
-           <div className="quote">"Just keep swimming."</div>
-           <div className="quote sub-quote">♡ home is where the water is ♡</div>
+          <div className="quote">"Just keep swimming."</div>
+          <div className="quote sub-quote">♡ home is where the water is ♡</div>
         </div>
         <div className="wall-lamp"></div>
         <div className="pendant-lamp"></div>
       </div>
       <div className="room-floor"></div>
-      
+
       {/* Furniture Background */}
 
       <div className="skirting-board"></div>
@@ -56,7 +58,7 @@ const LivingRoom: React.FC = () => {
       <div className="coffee-table">
         <div className="table-items"></div>
       </div>
-      
+
       <div className="sofa">
         <div className="sofa-cushion-1"></div>
         <div className="sofa-cushion-2"></div>
