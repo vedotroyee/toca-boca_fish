@@ -1,7 +1,7 @@
 .munchkin-cat {
   position: absolute;
   bottom: 12%; 
-  left: 25%; /* Sofa position */
+  left: 43%; /* Sofa position */
   z-index: 20;
   width: 120px;
   height: 80px;
@@ -157,7 +157,7 @@
 }
 
 .cat-walking {
-  transform: translateX(25vw); /* Move to the cabinet base */
+  transform: translateX(7vw); /* Move to the cabinet base */
   bottom: 12%;
 }
 .cat-walking .cat-leg {
@@ -170,7 +170,7 @@
 }
 
 .cat-climbing {
-  transform: translateX(35vw) rotate(-60deg); 
+  transform: translateX(17vw) rotate(-60deg); 
   bottom: 50%; /* Climb up the cabinet wall */
   transition: transform 2s ease-in-out, bottom 2s ease-in-out;
 }
@@ -180,7 +180,7 @@
 
 .cat-watching, .cat-tapping {
   /* Sitting on top of the cabinet edge looking into the tank */
-  transform: translateX(35vw);
+  transform: translateX(17vw);
   bottom: 60%;
 }
 .cat-watching .cat-head {
@@ -210,7 +210,7 @@
 }
 
 .cat-climbing_down {
-  transform: translateX(30vw) rotate(30deg); 
+  transform: translateX(12vw) rotate(30deg); 
   bottom: 12%; 
   transition: transform 2s ease-in-out, bottom 2s ease-in-out;
 }

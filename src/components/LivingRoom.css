@@ -186,11 +186,10 @@
   border-radius: 4px;
 }
 
-/* Foreground Furniture */
 .sofa {
   position: absolute;
   bottom: 10%;
-  left: 20%;
+  left: 38%;
   width: 400px;
   height: 150px;
   background: var(--sofa-color);
@@ -224,7 +223,7 @@
 .jute-rug {
   position: absolute;
   bottom: 5%;
-  left: 15%;
+  left: 32%;
   width: 500px;
   height: 80px;
   background: var(--carpet-color);
@@ -236,7 +235,7 @@
 .coffee-table {
   position: absolute;
   bottom: 5%;
-  left: 30%;
+  left: 46%;
   width: 200px;
   height: 60px;
   background: var(--cabinet-color);

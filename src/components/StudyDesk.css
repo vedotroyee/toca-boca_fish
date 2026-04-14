@@ -1,0 +1,284 @@
+.study-desk-wrapper {
+  position: absolute;
+  bottom: 12%; /* Aligned on the floor, same baseline area as the sofa */
+  left: -2%; /* Moved entirely to the corner/edge so it doesn't overlap the sofa */
+  width: 200px;
+  height: 120px;
+  z-index: 5; /* Share foreground layer alongside sofa */
+  transition: filter 1s ease;
+  transform: scale(1.9); /* Enlarged to be as big as sofa (200px -> ~380px) */
+  transform-origin: bottom left; /* Ensures correct scaling position from floor */
+}
+
+/* Desk Itself */
+.desk-top {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 16px;
+  background: var(--wood-accent, #c68a53);
+  border-radius: 6px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1), inset 0 2px 0 rgba(255,255,255,0.2);
+  z-index: 2;
+}
+
+.desk-leg {
+  position: absolute;
+  top: 15px;
+  width: 12px;
+  height: 85px;
+  background: var(--wood-accent, #b37841);
+  border-radius: 0 0 4px 4px;
+  box-shadow: inset -2px 0 0 rgba(0,0,0,0.1);
+}
+
+.desk-leg-left {
+  left: 15px;
+}
+
+/* Drawers on the right */
+.desk-drawers {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 60px;
+  height: 85px;
+  background: var(--cabinet-color, #e8d0b3);
+  border-radius: 0 0 4px 4px;
+  border: 3px solid var(--wood-accent, #b37841);
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset -4px -4px 10px rgba(0,0,0,0.05);
+}
+
+.desk-drawer {
+  flex: 1;
+  border-bottom: 2px solid var(--wood-accent, #b37841);
+  position: relative;
+}
+
+.desk-drawer:last-child {
+  border-bottom: none;
+}
+
+.desk-drawer::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 6px;
+  background: #8e5b32;
+  border-radius: 4px;
+  box-shadow: 0 2px 0 rgba(255,255,255,0.3);
+}
+
+/* Cute Pink Chair */
+.desk-chair {
+  position: absolute;
+  bottom: -5px; /* Touches floor */
+  left: 60px; /* Tucked right in the middle between leg and drawers */
+  width: 50px;
+  height: 70px;
+  z-index: 1; /* Under the desk surface */
+}
+
+.chair-seat {
+  position: absolute;
+  bottom: 35px;
+  width: 100%;
+  height: 12px;
+  background: #ffb7b2; /* Toca pink */
+  border-radius: 6px;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.1);
+  z-index: 2;
+}
+
+.chair-back {
+  position: absolute;
+  bottom: 45px;
+  left: 5px;
+  width: 40px;
+  height: 40px;
+  background: #ffb7b2;
+  border-radius: 12px 12px 4px 4px;
+  box-shadow: inset -2px -2px 0 rgba(0,0,0,0.1);
+  z-index: -1;
+}
+
+.chair-leg {
+  position: absolute;
+  bottom: 0;
+  width: 6px;
+  height: 40px;
+  background: #d4a373;
+  border-radius: 3px;
+}
+
+.chair-leg-left {
+  left: 10px;
+}
+
+.chair-leg-right {
+  right: 10px;
+}
+
+/* Desk Items Container */
+.desk-items {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+}
+
+/* Plant */
+.desk-plant {
+  position: absolute;
+  top: -35px;
+  left: 20px;
+  width: 30px;
+  height: 35px;
+}
+
+.plant-pot {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 18px;
+  background: #fff;
+  border-radius: 4px 4px 8px 8px;
+  box-shadow: inset -3px -3px 0 rgba(0,0,0,0.05);
+  border: 1px solid #eaeaea;
+}
+
+.plant-leaf {
+  position: absolute;
+  bottom: 15px;
+  width: 12px;
+  height: 20px;
+  background: #84dcc6; /* cute minty green */
+  border-radius: 12px 0 12px 0;
+}
+
+.plant-leaf-1 {
+  left: 0;
+  transform: rotate(-30deg);
+}
+
+.plant-leaf-2 {
+  left: 10px;
+  height: 24px;
+  background: #68c3a3;
+  transform: rotate(10deg);
+  z-index: 2;
+}
+
+.plant-leaf-3 {
+  left: 18px;
+  bottom: 12px;
+  height: 16px;
+  transform: rotate(40deg);
+}
+
+/* Books */
+.desk-books {
+  position: absolute;
+  top: -24px;
+  left: 70px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.book {
+  width: 10px;
+  border-radius: 2px 2px 0 0;
+  margin-left: 2px;
+  box-shadow: inset -2px 0 0 rgba(0,0,0,0.1);
+}
+
+.book-1 {
+  background: #a0c4ff;
+  height: 22px;
+}
+
+.book-2 {
+  background: #fdffb6;
+  height: 26px;
+}
+
+.book-3 {
+  background: #caffbf;
+  height: 24px;
+  transform: rotate(15deg);
+  transform-origin: bottom left;
+  margin-left: 4px;
+}
+
+/* Desk Lamp */
+.desk-lamp {
+  position: absolute;
+  top: -45px;
+  right: 25px;
+  width: 40px;
+  height: 45px;
+}
+
+.lamp-base {
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  width: 20px;
+  height: 6px;
+  background: #ffd6a5; /* peach */
+  border-radius: 10px 10px 0 0;
+}
+
+.lamp-stand {
+  position: absolute;
+  bottom: 6px;
+  left: 18px;
+  width: 4px;
+  height: 25px;
+  background: #ffc280;
+  transform: rotate(15deg);
+  transform-origin: bottom center;
+}
+
+.lamp-head {
+  position: absolute;
+  top: 4px;
+  left: 20px;
+  width: 24px;
+  height: 16px;
+  background: #ffd6a5;
+  border-radius: 12px 12px 0 0;
+  transform: rotate(25deg);
+  z-index: 2;
+}
+
+.lamp-light {
+  position: absolute;
+  bottom: -60px;
+  left: -20px;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(ellipse at top, rgba(255,240,150,0.8) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  clip-path: polygon(30% 0, 70% 0, 100% 100%, 0% 100%);
+  transform-origin: top center;
+  transform: rotate(-10deg);
+}
+
+.desk-lamp.lamp-on .lamp-light {
+  opacity: 1;
+}
+
+/* Night Mode Overrides */
+.night-mode .study-desk-wrapper {
+  filter: brightness(0.85);
+}
