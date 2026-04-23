@@ -10,42 +10,53 @@
   transition: all 1s ease;
 }
 
-/* Pendulum */
-.pendulum {
+/* Table Clock Feet */
+.clock-feet {
   position: absolute;
-  bottom: -40px;
-  left: 50%;
-  transform-origin: top center;
-  transform: translateX(-50%);
-  animation: swing 2s ease-in-out infinite alternate;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
   z-index: -1;
 }
 
-.pendulum-arm {
-  width: 4px;
-  height: 60px;
+.clock-foot {
+  width: 20px;
+  height: 20px;
   background: #c39a6b;
-  margin: 0 auto;
+  border-radius: 5px 5px 10px 10px;
+  box-shadow: inset -2px -2px 5px rgba(0,0,0,0.2);
 }
 
-.pendulum-bob {
-  width: 24px;
-  height: 24px;
-  background: #e5b17a;
-  border-radius: 50%;
-  box-shadow: inset -2px -2px 5px rgba(0, 0, 0, 0.1);
-  margin-left: -10px;
-  /* center relative to 4px arm */
+/* Cat ears on clock rim */
+.clock-ears {
+  position: absolute;
+  top: -15px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+  z-index: -1;
 }
 
-@keyframes swing {
-  0% {
-    transform: translateX(-50%) rotate(-10deg);
-  }
+.clock-ear {
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 30px solid #e5c39c;
+}
 
-  100% {
-    transform: translateX(-50%) rotate(10deg);
-  }
+.ear-left {
+  transform: rotate(-15deg);
+}
+
+.ear-right {
+  transform: rotate(15deg);
 }
 
 /* Main Clock Body */
@@ -94,8 +105,7 @@
 .paw-marker .toe {
   width: 3px;
   height: 4px;
-  background: #e51b62;
-  /* Dusty rose ink */
+  background: #50443a; /* Deep contrasting brown for high visibility */
   border-radius: 50%;
   position: absolute;
 }
@@ -120,7 +130,7 @@
 .paw-marker .pad {
   width: 8px;
   height: 6px;
-  background: #e0462e;
+  background: #50443a; /* Deep contrasting brown */
   border-radius: 50% 50% 40% 40%;
   margin-top: 6px;
 }

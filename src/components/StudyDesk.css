@@ -183,38 +183,19 @@
   transform: rotate(40deg);
 }
 
-/* Books */
-.desk-books {
+/* Table Cat Clock */
+.desk-cat-clock {
   position: absolute;
-  top: -24px;
-  left: 70px;
-  display: flex;
-  align-items: flex-end;
+  bottom: 100%; /* Sits exactly on the top surface line of the desk */
+  left: 30px; /* Moved left to prevent overlap with the lamp */
+  transform: scale(0.35); /* Shrink the old giant wall clock down to desk size! */
+  transform-origin: bottom center;
+  z-index: 5;
 }
-
-.book {
-  width: 10px;
-  border-radius: 2px 2px 0 0;
-  margin-left: 2px;
-  box-shadow: inset -2px 0 0 rgba(0,0,0,0.1);
-}
-
-.book-1 {
-  background: #a0c4ff;
-  height: 22px;
-}
-
-.book-2 {
-  background: #fdffb6;
-  height: 26px;
-}
-
-.book-3 {
-  background: #caffbf;
-  height: 24px;
-  transform: rotate(15deg);
-  transform-origin: bottom left;
-  margin-left: 4px;
+.desk-cat-clock .wall-clock-wrapper {
+  position: relative !important; /* Override absolute wall placement */
+  top: auto !important;
+  left: auto !important;
 }
 
 /* Desk Lamp */

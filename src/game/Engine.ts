@@ -81,7 +81,6 @@ export class Engine {
       this.catRippleActive = true;
       audio.init();
       audio.playMeow();
-      audio.playSplash();
 
       // Scatter fishes violently
       for(let fish of this.fishes) {

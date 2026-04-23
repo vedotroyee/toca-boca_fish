@@ -1,0 +1,273 @@
+.room-window {
+  position: absolute;
+  top: 8%;
+  left: 8%;
+  width: 320px;
+  height: 400px;
+  z-index: 2;
+}
+
+.window-frame-outer {
+  width: 100%;
+  height: 100%;
+  background: var(--cabinet-color); /* Matches wood aesthetic */
+  border-radius: 10px;
+  border: 8px solid var(--wood-accent);
+  box-shadow: 10px 10px 20px var(--shadow-color), inset 0 0 15px rgba(0,0,0,0.4);
+  display: flex;
+  position: relative;
+}
+
+.window-strut-v {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 12px;
+  height: 100%;
+  background: var(--wood-accent);
+  transform: translateX(-50%);
+  box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+  z-index: 10;
+}
+
+.window-sill {
+  position: absolute;
+  bottom: -15px;
+  left: -20px;
+  width: calc(100% + 40px);
+  height: 20px;
+  background: var(--wood-accent);
+  border-radius: 5px;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+  z-index: 11;
+}
+
+.window-pane {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.window-pane::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 40%, transparent 50%);
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* Interior Dimensions calculation: outer width = 320. Borders = 16. Inner width = 304px. Pane width = 152px. */
+.window-scene-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 304px;
+  height: 384px;
+  background: linear-gradient(to bottom, #76c0e3, #d4f0ff);
+  transition: background 4s cubic-bezier(0.4, 0.0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* When in right pane, shift content to align continuous picture */
+.right-offset.window-scene-content {
+  transform: translateX(-152px);
+}
+
+.room-window.is-night .window-scene-content {
+  background: linear-gradient(to bottom, #0d122e, #1d2547);
+}
+
+/* --- SCENARIO --- */
+
+.celestial-body {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  width: 60px;
+  height: 60px;
+  z-index: 1;
+  transition: all 4s ease;
+}
+
+/* Sun */
+.sun {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  animation: slowRise 30s infinite alternate ease-in-out;
+}
+.sun-core {
+  width: 100%;
+  height: 100%;
+  background: #ffdd44;
+  border-radius: 50%;
+  box-shadow: 0 0 40px #ffbb00;
+}
+.sun-rays {
+  position: absolute;
+  top: -20px; left: -20px; right: -20px; bottom: -20px;
+  background: radial-gradient(circle, rgba(255, 238, 136, 0.4) 0%, transparent 60%);
+  border-radius: 50%;
+  animation: pulseRays 4s infinite alternate;
+}
+
+/* Moon */
+.moon {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden; /* To cleanly mask the shadow */
+  background: #fffac2;
+  box-shadow: 0 0 30px rgba(255, 250, 194, 0.6);
+  animation: floatMoon 20s infinite alternate ease-in-out;
+}
+
+.moon-base {
+  width: 100%;
+  height: 100%;
+  background: #fffac2;
+  border-radius: 50%;
+  box-shadow: inset -5px -5px 15px rgba(200, 200, 180, 0.8);
+}
+
+/* The shadow moving over the moon */
+.moon-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #0d122e; /* Matches night sky top color */
+  border-radius: 50%;
+  transform: translateX(0%); /* Controlled by React based on phase */
+  box-shadow: inset 5px 5px 10px rgba(0,0,0,0.5); /* Crater/moon terminator softer edge */
+  transition: transform 1s ease;
+}
+
+/* Small twinkling stars */
+.star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 3s infinite alternate;
+}
+
+/* Clouds */
+.clouds {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 2;
+}
+
+.cloud {
+  position: absolute;
+  background: white;
+  border-radius: 50px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  transition: background 4s ease;
+}
+.room-window.is-night .cloud {
+  background: #2b345c;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.cloud-1 {
+  top: 60px; left: -100px;
+  width: 120px; height: 40px;
+  animation: cloudDrift 60s infinite linear;
+}
+.cloud-1::before {
+  content: ''; position: absolute; top: -20px; left: 15px; width: 50px; height: 50px; background: inherit; border-radius: 50%;
+}
+.cloud-1::after {
+  content: ''; position: absolute; top: -30px; left: 45px; width: 65px; height: 65px; background: inherit; border-radius: 50%;
+}
+
+.cloud-2 {
+  top: 130px; left: -200px;
+  width: 80px; height: 25px;
+  animation: cloudDrift 45s infinite linear 15s;
+  opacity: 0.8;
+}
+.cloud-2::before {
+  content: ''; position: absolute; top: -15px; left: 10px; width: 35px; height: 35px; background: inherit; border-radius: 50%;
+}
+
+.cloud-3 {
+  top: 90px; left: -300px;
+  width: 100px; height: 35px;
+  animation: cloudDrift 70s infinite linear 5s;
+}
+.cloud-3::before {
+  content: ''; position: absolute; top: -20px; left: 20px; width: 45px; height: 45px; background: inherit; border-radius: 50%;
+}
+
+/* Landscape Layer */
+.landscape {
+  position: absolute;
+  bottom: 0; left: 0; width: 100%; height: 100px;
+  z-index: 3;
+}
+
+.mountain {
+  position: absolute;
+  bottom: 0;
+  border-radius: 100% 100% 0 0;
+  transition: background 4s ease;
+}
+
+.m-back {
+  left: -20px;
+  width: 200px; height: 120px;
+  background: #62a37d; /* Day color */
+}
+.room-window.is-night .m-back { background: #162438; }
+
+.m-front {
+  right: -30px;
+  width: 220px; height: 90px;
+  background: #468c62; /* Day color */
+}
+.room-window.is-night .m-front { background: #0f182b; }
+
+.trees {
+  position: absolute;
+  bottom: 0; left: 0; width: 100%; height: 30px;
+  background: #2a6944;
+  clip-path: polygon(0 100%, 0 40%, 5% 0%, 10% 40%, 15% 10%, 20% 50%, 25% 20%, 30% 60%, 35% 30%, 40% 70%, 50% 10%, 60% 60%, 70% 20%, 80% 50%, 90% 10%, 100% 50%, 100% 100%);
+  transition: background 4s ease;
+}
+.room-window.is-night .trees { background: #0a101d; }
+
+/* Animations */
+@keyframes cloudDrift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(500px); }
+  /* Wraps around because we placed them far left */
+}
+
+@keyframes pulseRays {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.1); opacity: 1; }
+}
+
+@keyframes slowRise {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
+}
+
+@keyframes floatMoon {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-5px) rotate(5deg); }
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.2; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.2); }
+}

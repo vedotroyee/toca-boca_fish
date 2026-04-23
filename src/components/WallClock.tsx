@@ -23,10 +23,16 @@ const WallClock: React.FC<Props> = ({ isNight }) => {
 
   return (
     <div className={`wall-clock-wrapper ${isNight ? 'clock-night' : ''}`}>
-      {/* Optional gentle pendulum */}
-      <div className="pendulum">
-        <div className="pendulum-arm"></div>
-        <div className="pendulum-bob"></div>
+      {/* Table clock little feet */}
+      <div className="clock-feet">
+        <div className="clock-foot foot-left"></div>
+        <div className="clock-foot foot-right"></div>
+      </div>
+      
+      {/* Cat ears for the body of the clock! */}
+      <div className="clock-ears">
+        <div className="clock-ear ear-left"></div>
+        <div className="clock-ear ear-right"></div>
       </div>
       
       <div className="clock-rim">

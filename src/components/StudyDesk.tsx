@@ -1,5 +1,6 @@
 import React from 'react';
 import './StudyDesk.css';
+import WallClock from './WallClock';
 
 interface StudyDeskProps {
   isNight?: boolean;
@@ -27,11 +28,11 @@ const StudyDesk: React.FC<StudyDeskProps> = ({ isNight }) => {
           <div className="plant-pot"></div>
         </div>
 
-        {/* Books */}
-        <div className="desk-books">
-          <div className="book book-1"></div>
-          <div className="book book-2"></div>
-          <div className="book book-3"></div>
+        {/* Table Clock */}
+        <div className="desk-cat-clock">
+          {/* Note: It's still using the original WallClock component code, 
+              but the CSS has naturally altered it to act as a table clock! */}
+          <WallClock isNight={isNight || false} />
         </div>
 
         {/* Desk Lamp */}

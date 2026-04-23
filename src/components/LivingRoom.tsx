@@ -5,6 +5,7 @@ import ControlPanel from './ControlPanel';
 import CatComponent from './CatComponent';
 import WallClock from './WallClock';
 import StudyDesk from './StudyDesk';
+import RoomWindow from './RoomWindow';
 
 const LivingRoom: React.FC = () => {
   const [isNight, setIsNight] = useState(false);
@@ -21,10 +22,8 @@ const LivingRoom: React.FC = () => {
     <div className="living-room">
       {/* Background Layer */}
       <div className="room-wall">
-        <WallClock isNight={isNight} />
-        {/* Subtle texture via CSS */}
-        <div className="wall-lamp"></div>
-        <div className="pendant-lamp"></div>
+        {/* Dynamic Window Scene replacing old lamps */}
+        <RoomWindow isNight={isNight} />
       </div>
       <div className="room-floor"></div>
 
