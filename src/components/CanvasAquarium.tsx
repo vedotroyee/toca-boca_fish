@@ -15,11 +15,32 @@ const CanvasAquarium: React.FC = () => {
     newEngine.start();
     setEngine(newEngine);
 
+    // Restore state
+    const savedTankStr = localStorage.getItem('toca_current_tank');
+    if (savedTankStr) {
+        const savedTank = JSON.parse(savedTankStr);
+        if (savedTank.fishes && Array.isArray(savedTank.fishes)) {
+            import('../game/Fish').then(({ Fish }) => {
+                savedTank.fishes.forEach((type: string) => {
+                    newEngine.fishes.push(new Fish(Math.random() * newEngine.width, Math.random() * newEngine.height, newEngine.fishes.length, type));
+                });
+            });
+        }
+    }
+
+    const saveState = () => {
+        const types = newEngine.fishes.map(f => f.type);
+        const theme = localStorage.getItem('toca_theme') || 'Ocean';
+        import('../lib/db').then(({ saveCurrentTankState }) => saveCurrentTankState(types, theme));
+    };
+
     const handleFeed = () => {
       newEngine.dropFood();
     };
 
-
+    const handleFishAdded = () => {
+        setTimeout(saveState, 100);
+    };
 
     const handleVolume = ((e: CustomEvent) => {
         import('../game/Audio').then(({audio}) => {
@@ -27,15 +48,27 @@ const CanvasAquarium: React.FC = () => {
             audio.setAmbienceVolume(e.detail.vol);
         });
     }) as EventListener;
+
+    const handleSoundTheme = ((e: CustomEvent) => {
+        import('../game/Audio').then(({audio}) => {
+            audio.init();
+            audio.setTheme(e.detail.sound);
+        });
+    }) as EventListener;
     
     window.addEventListener('aquarium:feed', handleFeed);
-    // window.addEventListener('aquarium:cat', handleCat); // The Cat is handled by DOM
     window.addEventListener('audio:ambience', handleVolume);
+    window.addEventListener('aquarium:sound_theme_change', handleSoundTheme);
+    window.addEventListener('aquarium:add_fish', handleFishAdded);
+    window.addEventListener('aquarium:add_timer_fish', handleFishAdded);
 
     return () => {
       newEngine.stop();
       window.removeEventListener('aquarium:feed', handleFeed);
       window.removeEventListener('audio:ambience', handleVolume);
+      window.removeEventListener('aquarium:sound_theme_change', handleSoundTheme);
+      window.removeEventListener('aquarium:add_fish', handleFishAdded);
+      window.removeEventListener('aquarium:add_timer_fish', handleFishAdded);
     };
   }, []);
 

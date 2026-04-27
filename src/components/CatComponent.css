@@ -178,7 +178,7 @@
   animation: waddle 0.2s infinite alternate;
 }
 
-.cat-watching, .cat-tapping {
+.cat-watching, .cat-tapping, .cat-enthusiastic_tapping, .cat-eating, .cat-watching_break {
   /* Sitting on top of the cabinet edge looking into the tank */
   transform: translateX(17vw);
   bottom: 60%;
@@ -259,3 +259,125 @@
   0% { transform: scale(0) rotate(-20deg); top: -10px; }
   100% { transform: scale(1) rotate(10deg); top: -40px; }
 }
+
+/* POMODORO LOOP STATES */
+.cat-enthusiastic_tapping .leg-fl, .cat-enthusiastic_tapping .leg-fr {
+  height: 50px;
+  bottom: -15px;
+  right: -25px;
+  transform: rotate(110deg);
+  animation: fastTapGlass 0.15s infinite alternate;
+  z-index: 10;
+}
+.cat-enthusiastic_tapping .leg-fr {
+  animation-delay: 0.075s;
+}
+
+@keyframes fastTapGlass {
+  0% { transform: rotate(110deg) translateX(0); }
+  100% { transform: rotate(110deg) translateX(30px); }
+}
+
+.cat-eating .cat-head {
+  transform: translateY(20px) rotate(45deg);
+  animation: eatMotion 0.5s infinite;
+}
+
+@keyframes eatMotion {
+  0%, 100% { transform: translateY(20px) rotate(45deg); }
+  50% { transform: translateY(25px) rotate(45deg); }
+}
+
+.cat-watching_break .cat-head {
+  animation: none;
+  transform: rotate(10deg);
+}
+.cat-watching_break .cat-eye { height: 14px; top: 18px; border-radius: 50%; }
+
+.cat-food-bowl {
+  position: absolute;
+  bottom: -5px;
+  right: -60px; /* near the cat's face on the cabinet */
+  width: 40px;
+  height: 20px;
+  background: #a8dadc;
+  border-radius: 5px 5px 20px 20px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+  z-index: 20;
+  animation: popIn 0.3s forwards;
+}
+
+.food-kibbles {
+  position: absolute;
+  top: -5px;
+  left: 5px;
+  width: 30px;
+  height: 10px;
+  background: radial-gradient(circle at 30% 30%, #8b5a2b 3px, transparent 4px),
+              radial-gradient(circle at 70% 60%, #a0522d 4px, transparent 5px),
+              radial-gradient(circle at 40% 80%, #cd853f 3px, transparent 4px);
+}
+
+/* BREED STYLES */
+
+/* Scottish Fold */
+.breed-scottish-fold .cat-body, .breed-scottish-fold .cat-head, .breed-scottish-fold .cat-tail {
+  background: #a9b4c2; /* Slate grey */
+}
+.breed-scottish-fold .cat-body::after { display: none; } /* No stripes */
+.breed-scottish-fold .cat-leg.leg-fl, .breed-scottish-fold .cat-leg.leg-bl { background: #a9b4c2; }
+.breed-scottish-fold .cat-leg.leg-fr, .breed-scottish-fold .cat-leg.leg-br { background: #8e99a8; }
+.breed-scottish-fold .cat-ear {
+  background: #a9b4c2;
+  border-radius: 50% 50% 0 0;
+  transform: rotate(0deg) translateY(5px);
+  height: 12px;
+}
+.breed-scottish-fold .ear-l { left: 8px; }
+.breed-scottish-fold .ear-r { right: 8px; }
+
+/* Orange Tabby */
+.breed-orange-tabby .cat-body, .breed-orange-tabby .cat-head, .breed-orange-tabby .cat-tail, .breed-orange-tabby .cat-ear {
+  background: #f4a261;
+}
+.breed-orange-tabby .cat-body::after {
+  background: repeating-linear-gradient(90deg, transparent, transparent 15px, rgba(231, 111, 81, 0.3) 15px, rgba(231, 111, 81, 0.3) 22px);
+}
+.breed-orange-tabby .cat-leg.leg-fl, .breed-orange-tabby .cat-leg.leg-bl { background: #f4a261; }
+.breed-orange-tabby .cat-leg.leg-fr, .breed-orange-tabby .cat-leg.leg-br { background: #e76f51; }
+.breed-orange-tabby .cat-tail { width: 55px; } /* Longer tail */
+
+/* Tuxedo */
+.breed-tuxedo .cat-body, .breed-tuxedo .cat-head, .breed-tuxedo .cat-tail, .breed-tuxedo .cat-ear {
+  background: #2b2d42;
+}
+.breed-tuxedo .cat-body::after {
+  /* White belly */
+  display: block;
+  top: 50%; left: 30%; width: 40%; height: 50%;
+  background: #ffffff;
+  border-radius: 50%;
+}
+.breed-tuxedo .cat-head::after {
+  content: ''; position: absolute;
+  bottom: 0; left: 25%; width: 50%; height: 40%;
+  background: #ffffff; border-radius: 50%; z-index: -1;
+}
+.breed-tuxedo .cat-leg.leg-fl, .breed-tuxedo .cat-leg.leg-bl { background: #ffffff; border-top: 5px solid #2b2d42; }
+.breed-tuxedo .cat-leg.leg-fr, .breed-tuxedo .cat-leg.leg-br { background: #e0e0e0; border-top: 5px solid #1a1c29; }
+.breed-tuxedo .cat-eye { background: #ffca28; } /* Yellow eyes */
+
+/* Siamese */
+.breed-siamese .cat-body { background: #fff3e0; }
+.breed-siamese .cat-head { background: #fff3e0; }
+.breed-siamese .cat-head::after {
+  /* Face point */
+  content: ''; position: absolute;
+  top: 15px; left: 10px; width: 35px; height: 35px;
+  background: #4a4e69; border-radius: 50%; z-index: -1;
+}
+.breed-siamese .cat-body::after { display: none; }
+.breed-siamese .cat-tail, .breed-siamese .cat-ear { background: #4a4e69; }
+.breed-siamese .cat-leg.leg-fl, .breed-siamese .cat-leg.leg-bl { background: #4a4e69; }
+.breed-siamese .cat-leg.leg-fr, .breed-siamese .cat-leg.leg-br { background: #22223b; }
+.breed-siamese .cat-eye { background: #4cc9f0; } /* Piercing blue eyes */

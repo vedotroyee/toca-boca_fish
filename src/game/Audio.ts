@@ -3,6 +3,11 @@ export class AudioEngine {
   masterGain: GainNode | null = null;
   ambienceGain: GainNode | null = null;
   meowBuffer: AudioBuffer | null = null;
+  
+  // Theme nodes
+  currentThemeSource: AudioNode | null = null;
+  currentThemeFilter: BiquadFilterNode | null = null;
+  currentThemeName: string = 'Underwater';
 
   init() {
     if (this.ctx) return;
@@ -26,32 +31,88 @@ export class AudioEngine {
 
   _startAmbience() {
     if (!this.ctx || !this.masterGain) return;
-    const osc = this.ctx.createOscillator();
-    osc.type = 'sine';
-    osc.frequency.value = 150; // soft higher hum
-
-    const lfo = this.ctx.createOscillator();
-    lfo.type = 'sine';
-    lfo.frequency.value = 0.5; // slow ocean wave
-    const lfoGain = this.ctx.createGain();
-    lfoGain.gain.value = 15;
-    lfo.connect(lfoGain);
-    lfoGain.connect(osc.frequency);
+    
+    if (this.currentThemeSource) {
+        try { (this.currentThemeSource as any).stop(); } catch(e){}
+        this.currentThemeSource.disconnect();
+    }
 
     this.ambienceGain = this.ctx.createGain();
-    this.ambienceGain.gain.value = 0.05; // default volume very low to avoid buzzing
-    
-    // Add lowpass filter to make it sound like underwater pressure instead of a pure tone
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 400;
-
-    osc.connect(filter);
-    filter.connect(this.ambienceGain);
+    this.ambienceGain.gain.value = 0.05; // default volume very low
     this.ambienceGain.connect(this.masterGain);
-    
-    lfo.start();
-    osc.start();
+
+    this.currentThemeFilter = this.ctx.createBiquadFilter();
+    this.currentThemeFilter.connect(this.ambienceGain);
+
+    if (this.currentThemeName === 'Underwater' || this.currentThemeName === 'Deep Ocean') {
+        const osc = this.ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = this.currentThemeName === 'Deep Ocean' ? 80 : 150;
+
+        const lfo = this.ctx.createOscillator();
+        lfo.type = 'sine';
+        lfo.frequency.value = this.currentThemeName === 'Deep Ocean' ? 0.2 : 0.5;
+        const lfoGain = this.ctx.createGain();
+        lfoGain.gain.value = 15;
+        lfo.connect(lfoGain);
+        lfoGain.connect(osc.frequency);
+
+        this.currentThemeFilter.type = 'lowpass';
+        this.currentThemeFilter.frequency.value = this.currentThemeName === 'Deep Ocean' ? 200 : 400;
+
+        osc.connect(this.currentThemeFilter);
+        lfo.start();
+        osc.start();
+        this.currentThemeSource = osc;
+    } else {
+        // Noise-based themes (Rain, Forest, Cafe)
+        const bufferSize = this.ctx.sampleRate * 2; // 2 seconds of noise
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        noise.loop = true;
+
+        if (this.currentThemeName === 'Rainy Day') {
+            this.currentThemeFilter.type = 'lowpass';
+            this.currentThemeFilter.frequency.value = 800;
+        } else if (this.currentThemeName === 'Forest Stream') {
+            this.currentThemeFilter.type = 'bandpass';
+            this.currentThemeFilter.frequency.value = 1200;
+            this.currentThemeFilter.Q.value = 0.5;
+        } else if (this.currentThemeName === 'Lo-fi Cafe') {
+            this.currentThemeFilter.type = 'lowpass';
+            this.currentThemeFilter.frequency.value = 600;
+        }
+
+        noise.connect(this.currentThemeFilter);
+        noise.start();
+        this.currentThemeSource = noise;
+    }
+  }
+
+  setTheme(themeName: string) {
+      if (this.currentThemeName === themeName) return;
+      this.currentThemeName = themeName;
+      if (this.ctx) {
+          // Fade out
+          if (this.ambienceGain) {
+              const currentVol = this.ambienceGain.gain.value;
+              this.ambienceGain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 1);
+              setTimeout(() => {
+                  this._startAmbience();
+                  // Fade back in
+                  if (this.ambienceGain) {
+                      this.ambienceGain.gain.setValueAtTime(0.01, this.ctx.currentTime);
+                      this.ambienceGain.gain.linearRampToValueAtTime(currentVol, this.ctx.currentTime + 1);
+                  }
+              }, 1000);
+          }
+      }
   }
 
   setAmbienceVolume(val: number) {

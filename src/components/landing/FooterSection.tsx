@@ -33,7 +33,7 @@ export default function FooterSection() {
           Your aquarium is waiting.
         </h2>
         <p style={{ fontSize: '1.2rem', color: '#e0f4f3', opacity: 0.8, marginBottom: '50px' }}>
-          The fish are already swimming. The cat is already judging. All you have to do is open the tab.
+          The fish are already swimming. Focus in loops. The cat keeps score. All you have to do is open the tab.
         </p>
 
         <Link to="/app" className="landing-btn primary" style={{ position: 'relative', overflow: 'hidden', padding: '20px 40px', fontSize: '1.3rem' }}>

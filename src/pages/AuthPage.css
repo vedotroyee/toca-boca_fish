@@ -1,0 +1,224 @@
+.auth-page {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background: #fdf6ec; /* Warm cream */
+  overflow: hidden;
+  font-family: 'Nunito', sans-serif;
+}
+
+.auth-left {
+  flex: 1;
+  position: relative;
+  background: linear-gradient(135deg, #1a4a4a, #0d3d4a);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-aquarium-scene {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.auth-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 40px;
+  background: #fffbf5;
+}
+
+.auth-form-container {
+  width: 100%;
+  max-width: 400px;
+  background: white;
+  padding: 40px;
+  border-radius: 30px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+  position: relative;
+  z-index: 10;
+}
+
+.auth-form-container h2 {
+  font-size: 2rem;
+  color: #d97757;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.auth-form-container p {
+  text-align: center;
+  color: #8a4b3d;
+  opacity: 0.8;
+  margin-bottom: 30px;
+}
+
+.auth-input-group {
+  margin-bottom: 20px;
+}
+
+.auth-input-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: #8a4b3d;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.auth-input-group input {
+  width: 100%;
+  padding: 15px 20px;
+  border-radius: 15px;
+  border: 2px solid #f0e6d2;
+  background: #fcf9f2;
+  font-size: 1rem;
+  font-family: 'Nunito', sans-serif;
+  color: #3e505b;
+  outline: none;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.auth-input-group input:focus {
+  border-color: #d97757;
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 15px;
+  border: none;
+  background: #ff7f50; /* Soft coral */
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s, box-shadow 0.2s;
+  font-family: 'Nunito', sans-serif;
+  margin-bottom: 20px;
+}
+
+.auth-btn:hover {
+  background: #e67347;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 127, 80, 0.3);
+}
+
+.auth-btn:active {
+  transform: translateY(0);
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  color: #b0a08e;
+  font-size: 0.9rem;
+}
+
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e0d5c1;
+  margin: 0 10px;
+}
+
+.google-btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 30px; /* pill shape */
+  border: 2px solid #e0d5c1;
+  background: white;
+  color: #8a4b3d;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.3s;
+  font-family: 'Nunito', sans-serif;
+}
+
+.google-btn:hover {
+  background: #fdf6ec;
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #8a4b3d;
+}
+
+.auth-switch button {
+  background: none;
+  border: none;
+  color: #d97757;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  text-decoration: underline;
+}
+
+/* Cat peeking below form */
+.auth-cat {
+  position: absolute;
+  bottom: -60px;
+  right: 40px;
+  width: 100px;
+  height: 80px;
+  z-index: 5;
+  transition: transform 0.3s ease;
+}
+
+.auth-cat svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+}
+
+.auth-form-container:hover ~ .auth-cat {
+  transform: translateY(-20px);
+}
+
+/* Ripple effect */
+.glass-ripple {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0;
+}
+.glass-ripple.active {
+  animation: ripple 1.5s ease-out forwards;
+}
+
+@keyframes ripple {
+  0% { backdrop-filter: blur(0px) contrast(1); opacity: 1; }
+  50% { backdrop-filter: blur(10px) contrast(1.2); opacity: 1; }
+  100% { backdrop-filter: blur(0px) contrast(1); opacity: 0; }
+}
+
+@media (max-width: 768px) {
+  .auth-page {
+    flex-direction: column;
+  }
+  .auth-left {
+    flex: 0.4;
+  }
+  .auth-right {
+    flex: 0.6;
+    padding: 20px;
+  }
+}

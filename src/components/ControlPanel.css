@@ -123,6 +123,26 @@
   gap: 8px;
   margin-top: 12px;
 }
+.slider-group.mb-15 { margin-bottom: 15px; }
+
+.custom-select {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.7);
+  font-family: 'Nunito', sans-serif;
+  color: var(--text-dark);
+  font-size: 12px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.custom-select:focus {
+  border-color: #3e505b;
+}
+
 .slider-group label {
   font-size: 12px;
   font-weight: 600;
@@ -237,4 +257,94 @@
 @keyframes popIn {
   0% { transform: scale(0); }
   100% { transform: scale(1); }
+}
+
+.loop-progress {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.loop-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.loop-dot.filled {
+  background: #d4a373; /* Terracotta/amber */
+  border-color: #d4a373;
+}
+
+.progress-fill.break-fill {
+  background: #d4a373;
+}
+
+.skip-btn {
+  background: #e07a5f;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.break-toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.break-toggle-group label {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.toggle-buttons button {
+  flex: 1;
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.3);
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-dark);
+}
+
+.toggle-buttons button.active {
+  background: #d4a373;
+  color: white;
+  border-color: #d4a373;
+}
+
+.toast-notification {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  color: #3e505b;
+  padding: 12px 24px;
+  border-radius: 20px;
+  font-weight: bold;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 0.5s 4.5s forwards;
+  z-index: 1000;
+}
+
+@keyframes slideDown {
+  0% { transform: translate(-50%, -100%); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
 }

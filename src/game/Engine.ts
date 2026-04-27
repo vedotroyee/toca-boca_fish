@@ -28,9 +28,13 @@ export class Engine {
   catTapX = 0;
   catTapY = 0;
 
+  // Theme support
+  theme: string = 'Ocean';
+
   constructor(canvas: HTMLCanvasElement, parent: HTMLDivElement) {
     this.canvas = canvas;
     this.parent = parent;
+    this.theme = localStorage.getItem('toca_theme') || 'Ocean';
     
     const context = this.canvas.getContext('2d');
     if (!context) throw new Error("Could not get 2D context");
@@ -90,6 +94,10 @@ export class Engine {
           fish.applyForce(diff);
       }
     });
+
+    window.addEventListener('aquarium:theme_change', ((e: CustomEvent) => {
+        this.theme = e.detail.theme;
+    }) as EventListener);
   }
 
   handleResize() {
@@ -142,8 +150,43 @@ export class Engine {
   drawDecorations(time: number) {
     const ctx = this.ctx;
 
+    let sandColor = 'rgba(232, 207, 166, 0.4)';
+    let rockColor1 = '#6a7882';
+    let rockColor2 = '#5c6770';
+    let plantColor = '#4e9a5c';
+    let fgSandColor = '#e8cfa6';
+    let chestColor = '#6b4d3a';
+
+    if (this.theme === 'Coral Reef') {
+        sandColor = 'rgba(255, 230, 200, 0.5)';
+        fgSandColor = '#ffdca8';
+        rockColor1 = '#ff8c94';
+        rockColor2 = '#f67280';
+        plantColor = '#f8b195';
+    } else if (this.theme === 'Arctic') {
+        sandColor = 'rgba(220, 240, 255, 0.5)';
+        fgSandColor = '#e0f4ff';
+        rockColor1 = '#a8b8c8';
+        rockColor2 = '#8a9ba8';
+        plantColor = '#b8e0e0';
+        chestColor = '#a0b0c0'; // frozen chest
+    } else if (this.theme === 'Midnight') {
+        sandColor = 'rgba(20, 30, 40, 0.6)';
+        fgSandColor = '#1a2a3a';
+        rockColor1 = '#152535';
+        rockColor2 = '#101520';
+        plantColor = '#00ffcc'; // bioluminescent
+        chestColor = '#101010';
+    } else if (this.theme === 'Sakura Pond') {
+        sandColor = 'rgba(220, 200, 200, 0.4)';
+        fgSandColor = '#e8d0d0';
+        rockColor1 = '#a09090';
+        rockColor2 = '#807070';
+        plantColor = '#ffb7b2'; // pink plants
+    }
+
     // 1. Draw sand hills in background
-    ctx.fillStyle = 'rgba(232, 207, 166, 0.4)'; // darker sand
+    ctx.fillStyle = sandColor;
     ctx.beginPath();
     ctx.moveTo(0, this.height);
     ctx.lineTo(0, this.height - 60);
@@ -153,16 +196,20 @@ export class Engine {
     ctx.fill();
 
     // 2. Draw Rocks
-    ctx.fillStyle = '#6a7882';
+    ctx.fillStyle = rockColor1;
     ctx.beginPath(); ctx.ellipse(this.width * 0.8, this.height - 30, 60, 40, 0, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#5c6770';
+    ctx.fillStyle = rockColor2;
     ctx.beginPath(); ctx.ellipse(this.width * 0.85, this.height - 15, 50, 30, 0, 0, Math.PI*2); ctx.fill();
 
     // 3. Draw Vallisneria (Swaying plants)
-    ctx.strokeStyle = '#4e9a5c';
+    ctx.strokeStyle = plantColor;
     ctx.lineCap = 'round';
     for(let i=0; i<8; i++) {
       ctx.lineWidth = 6 - (i%3);
+      if (this.theme === 'Midnight') {
+          ctx.shadowColor = plantColor;
+          ctx.shadowBlur = 10;
+      }
       ctx.beginPath();
       const stX = 50 + i * 15;
       const stY = this.height - 20;
@@ -171,10 +218,11 @@ export class Engine {
       const wave = Math.sin(time * 0.001 + i) * 20;
       ctx.quadraticCurveTo(stX + wave, stY - 60, stX + wave * 1.5, stY - 150 - (i%2)*20);
       ctx.stroke();
+      ctx.shadowBlur = 0; // reset
     }
 
     // 4. Draw Driftwood Arch
-    ctx.fillStyle = '#4a3424';
+    ctx.fillStyle = chestColor === '#101010' ? '#111' : '#4a3424';
     ctx.beginPath();
     ctx.moveTo(this.width * 0.3, this.height - 20);
     ctx.quadraticCurveTo(this.width * 0.4, this.height - 180, this.width * 0.55, this.height - 20);
@@ -182,13 +230,13 @@ export class Engine {
     ctx.fill();
 
     // Moss on arch
-    ctx.fillStyle = '#3a5a24';
+    ctx.fillStyle = plantColor;
     ctx.beginPath();
     ctx.ellipse(this.width * 0.42, this.height - 120, 20, 10, -Math.PI/6, 0, Math.PI*2);
     ctx.fill();
 
     // 5. Foreground Sand Floor
-    ctx.fillStyle = '#e8cfa6';
+    ctx.fillStyle = fgSandColor;
     ctx.beginPath();
     ctx.moveTo(0, this.height);
     ctx.lineTo(0, this.height - 40);
@@ -201,11 +249,11 @@ export class Engine {
     const openAngle = Math.abs(Math.sin(time * 0.0005));
     ctx.save();
     ctx.translate(this.width * 0.2, this.height - 45);
-    ctx.fillStyle = '#6b4d3a';
+    ctx.fillStyle = chestColor;
     ctx.fillRect(-25, -20, 50, 30); // base
     ctx.fillStyle = '#ffd700';
     ctx.fillRect(-20, -15, 40, 20); // gold
-    ctx.fillStyle = '#8c6a51';
+    ctx.fillStyle = chestColor === '#101010' ? '#222' : '#8c6a51';
     ctx.rotate(-openAngle);
     ctx.beginPath();
     ctx.arc(0, -20, 25, Math.PI, 0); // lid
@@ -230,20 +278,35 @@ export class Engine {
 
     this.drawDecorations(time);
 
-    // Draw bubbles
-    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+    // Draw bubbles or petals
+    this.ctx.fillStyle = this.theme === 'Sakura Pond' ? 'rgba(255, 183, 178, 0.6)' : 'rgba(255, 255, 255, 0.4)';
+    
     for (let bubble of this.bubbles) {
-      bubble.y -= bubble.speed;
-      bubble.x += Math.sin(time * 0.002 + bubble.offset) * 0.5;
-      
-      if (bubble.y < -10) {
-        bubble.y = this.height + 10;
-        // respawn near treasure chest or rocks
-        bubble.x = Math.random() > 0.5 ? this.width * 0.2 + Math.random() * 20 : this.width * 0.8 + Math.random() * 40;
+      if (this.theme === 'Sakura Pond') {
+          bubble.y += bubble.speed * 0.5; // Petals fall down
+          bubble.x += Math.sin(time * 0.002 + bubble.offset) * 1.5;
+          if (bubble.y > this.height + 10) {
+              bubble.y = -10;
+              bubble.x = Math.random() * this.width;
+          }
+      } else {
+          bubble.y -= bubble.speed;
+          bubble.x += Math.sin(time * 0.002 + bubble.offset) * 0.5;
+          
+          if (bubble.y < -10) {
+            bubble.y = this.height + 10;
+            bubble.x = Math.random() > 0.5 ? this.width * 0.2 + Math.random() * 20 : this.width * 0.8 + Math.random() * 40;
+          }
       }
 
       this.ctx.beginPath();
-      this.ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
+      if (this.theme === 'Sakura Pond') {
+          this.ctx.ellipse(bubble.x, bubble.y, bubble.size + 2, bubble.size, Math.sin(time*0.001 + bubble.offset), 0, Math.PI*2);
+      } else if (this.theme === 'Arctic') {
+          this.ctx.rect(bubble.x - bubble.size, bubble.y - bubble.size, bubble.size*2, bubble.size*2); // square snowflakes
+      } else {
+          this.ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
+      }
       this.ctx.fill();
     }
   }

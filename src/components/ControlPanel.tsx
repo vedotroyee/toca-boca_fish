@@ -12,15 +12,23 @@ const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
 
   // Timer State
   const [timerRunning, setTimerRunning] = useState(false);
-  const [intervalMins, setIntervalMins] = useState(30);
-  const [timeLeft, setTimeLeft] = useState(30 * 60);
-  const [totalLoops, setTotalLoops] = useState(1);
-  const [currentLoop, setCurrentLoop] = useState(1);
+  const [intervalMins, setIntervalMins] = useState(25);
+  const [timeLeft, setTimeLeft] = useState(25 * 60);
+  const [totalLoops, setTotalLoops] = useState(4);
+  const [completedIntervals, setCompletedIntervals] = useState(0);
+  const [isBreak, setIsBreak] = useState(false);
+  const [breakLength, setBreakLength] = useState(5);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Session Stats
   const [focusTime, setFocusTime] = useState(0); 
   const [fishEarned, setFishEarned] = useState(0);
   const [streak, setStreak] = useState(0);
+
+  // Customization
+  const [tankTheme, setTankTheme] = useState(localStorage.getItem('toca_theme') || 'Ocean');
+  const [catBreed, setCatBreed] = useState(localStorage.getItem('toca_cat_breed') || 'Munchkin');
+  const [soundTheme, setSoundTheme] = useState(localStorage.getItem('toca_sound_theme') || 'Underwater');
 
   const randomTimerFish = () => {
      const types = ['Clownfish', 'Betta', 'Goldfish', 'Angelfish', 'Discus', 'Neon', 'Corydoras'];
@@ -57,42 +65,68 @@ const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
              });
          }, 1000);
      } else if (timerRunning && timeLeft <= 0) {
-         const newEarned = fishEarned + 1;
-         setFishEarned(newEarned);
-         localStorage.setItem('toca_fish_today', newEarned.toString());
-         
-         const todayDate = new Date().toDateString();
-         if (localStorage.getItem('toca_last_session_date') !== todayDate) {
-             const newStreak = streak + 1;
-             setStreak(newStreak);
-             localStorage.setItem('toca_streak', newStreak.toString());
-             localStorage.setItem('toca_last_session_date', todayDate);
-         }
+         if (!isBreak) {
+             const newEarned = fishEarned + 1;
+             setFishEarned(newEarned);
+             localStorage.setItem('toca_fish_today', newEarned.toString());
+             
+             const todayDate = new Date().toDateString();
+             if (localStorage.getItem('toca_last_session_date') !== todayDate) {
+                 const newStreak = streak + 1;
+                 setStreak(newStreak);
+                 localStorage.setItem('toca_streak', newStreak.toString());
+                 localStorage.setItem('toca_last_session_date', todayDate);
+             }
 
-         window.dispatchEvent(new CustomEvent('aquarium:add_timer_fish', {detail: {type: randomTimerFish()}}));
-         
-         if (currentLoop < totalLoops) {
-             setCurrentLoop(c => c + 1);
-             setTimeLeft(intervalMins * 60);
+             window.dispatchEvent(new CustomEvent('aquarium:add_timer_fish', {detail: {type: randomTimerFish()}}));
+             
+             if (completedIntervals + 1 < totalLoops) {
+                 setCompletedIntervals(c => c + 1);
+                 setTimeLeft(intervalMins * 60);
+             } else {
+                 // Full Loop Complete
+                 setCompletedIntervals(totalLoops);
+                 setIsBreak(true);
+                 setTimeLeft(breakLength * 60);
+                 
+                 // Increment total loops completed
+                 const totalLoopsCompleted = parseInt(localStorage.getItem('toca_total_loops') || '0') + 1;
+                 localStorage.setItem('toca_total_loops', totalLoopsCompleted.toString());
+                 
+                 // Trigger events
+                 window.dispatchEvent(new Event('aquarium:loop_complete'));
+                 setToastMessage("Loop complete! Time for a break 🐾");
+                 setTimeout(() => setToastMessage(null), 5000);
+             }
          } else {
-             setTimerRunning(false);
+             // Break is over
+             setIsBreak(false);
+             setCompletedIntervals(0);
              setTimeLeft(intervalMins * 60);
-             setCurrentLoop(1);
+             window.dispatchEvent(new Event('aquarium:break_end'));
          }
      }
 
      return () => clearInterval(interval);
-  }, [timerRunning, timeLeft, intervalMins, fishEarned, streak, currentLoop, totalLoops]);
+  }, [timerRunning, timeLeft, intervalMins, fishEarned, streak, completedIntervals, totalLoops, isBreak, breakLength]);
 
   const toggleTimer = () => setTimerRunning(!timerRunning);
   const resetTimer = () => {
       setTimerRunning(false);
+      setIsBreak(false);
       setTimeLeft(intervalMins * 60);
-      setCurrentLoop(1);
+      setCompletedIntervals(0);
+      window.dispatchEvent(new Event('aquarium:break_end'));
+  };
+  const skipBreak = () => {
+      setIsBreak(false);
+      setCompletedIntervals(0);
+      setTimeLeft(intervalMins * 60);
+      window.dispatchEvent(new Event('aquarium:break_end'));
   };
   const handleIntervalChange = (val: number) => {
       setIntervalMins(val);
-      if (!timerRunning) setTimeLeft(val * 60);
+      if (!timerRunning && !isBreak) setTimeLeft(val * 60);
   };
 
   const formatTime = (secs: number) => {
@@ -116,6 +150,24 @@ const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
     // Initialize audio system early so the meow MP3 can download before the tap
     import('../game/Audio').then(({audio}) => audio.init());
     window.dispatchEvent(new Event('aquarium:cat'));
+  };
+
+  const handleThemeChange = (theme: string) => {
+      setTankTheme(theme);
+      localStorage.setItem('toca_theme', theme);
+      window.dispatchEvent(new CustomEvent('aquarium:theme_change', {detail: { theme }}));
+  };
+
+  const handleCatBreedChange = (breed: string) => {
+      setCatBreed(breed);
+      localStorage.setItem('toca_cat_breed', breed);
+      window.dispatchEvent(new CustomEvent('aquarium:cat_breed_change', {detail: { breed }}));
+  };
+
+  const handleSoundThemeChange = (sound: string) => {
+      setSoundTheme(sound);
+      localStorage.setItem('toca_sound_theme', sound);
+      window.dispatchEvent(new CustomEvent('aquarium:sound_theme_change', {detail: { sound }}));
   };
 
   return (
@@ -150,16 +202,19 @@ const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
 
         <div className="panel-section timer-section">
             <h3><Timer size={16}/> Focus Timer</h3>
-            <p className="description">Work and earn fish! Next fish in:</p>
+            <p className="description">{isBreak ? "Break time! Relax." : "Work and earn fish! Next fish in:"}</p>
             
             <div className="timer-display">
                <div className="countdown">{formatTime(timeLeft)}</div>
                <div className="progress-bar">
-                   <div className="progress-fill" style={{ width: `${100 - (timeLeft / (intervalMins * 60) * 100)}%`}}></div>
+                   <div className={`progress-fill ${isBreak ? 'break-fill' : ''}`} style={{ width: `${100 - (timeLeft / ((isBreak ? breakLength : intervalMins) * 60) * 100)}%`}}></div>
                </div>
-               {totalLoops > 1 && (
-                   <div className="description mt-15" style={{ marginBottom: 0, marginTop: '8px', fontWeight: 'bold' }}>Session {currentLoop} of {totalLoops}</div>
-               )}
+               
+               <div className="loop-progress">
+                   {[...Array(totalLoops)].map((_, i) => (
+                       <div key={i} className={`loop-dot ${i < completedIntervals ? 'filled' : ''}`}></div>
+                   ))}
+               </div>
             </div>
 
             <div className="timer-controls">
@@ -169,16 +224,29 @@ const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
                 <button className="timer-btn reset-btn" onClick={resetTimer}>
                     <RotateCcw size={16}/>
                 </button>
+                {isBreak && (
+                    <button className="timer-btn skip-btn" onClick={skipBreak}>
+                        Skip
+                    </button>
+                )}
             </div>
 
             <div className="slider-group mt-15">
-                <label>Fish Interval: {intervalMins} min</label>
-                <input type="range" min="5" max="120" step="5" value={intervalMins} onChange={(e) => handleIntervalChange(parseInt(e.target.value))} />
+                <label>Work Interval: {intervalMins} min</label>
+                <input type="range" min="5" max="60" step="5" value={intervalMins} onChange={(e) => handleIntervalChange(parseInt(e.target.value))} />
             </div>
 
             <div className="slider-group mt-15">
-                <label>Loop Sequence: {totalLoops} session{totalLoops > 1 ? 's' : ''}</label>
-                <input type="range" min="1" max="10" step="1" value={totalLoops} onChange={(e) => { setTotalLoops(parseInt(e.target.value)); setCurrentLoop(1); }} />
+                <label>Loop Count: {totalLoops}</label>
+                <input type="range" min="2" max="6" step="1" value={totalLoops} onChange={(e) => { setTotalLoops(parseInt(e.target.value)); setCompletedIntervals(0); }} />
+            </div>
+
+            <div className="break-toggle-group mt-15">
+                <label>Break Length:</label>
+                <div className="toggle-buttons">
+                    <button className={breakLength === 5 ? 'active' : ''} onClick={() => { setBreakLength(5); if(isBreak && !timerRunning) setTimeLeft(5*60); }}>5 min</button>
+                    <button className={breakLength === 10 ? 'active' : ''} onClick={() => { setBreakLength(10); if(isBreak && !timerRunning) setTimeLeft(10*60); }}>10 min</button>
+                </div>
             </div>
 
             <div className="session-stats mt-15">
@@ -207,8 +275,42 @@ const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
         </div>
 
         <div className="panel-section">
-            <h3><Sun size={16}/> Ambience</h3>
-            <button className="big-btn theme-btn" onClick={() => setIsNight(!isNight)}>
+            <h3><Sun size={16}/> Customization & Ambience</h3>
+
+            <div className="slider-group mb-15">
+                <label>Tank Theme</label>
+                <select className="custom-select" value={tankTheme} onChange={(e) => handleThemeChange(e.target.value)}>
+                    <option value="Ocean">Ocean</option>
+                    <option value="Coral Reef">Coral Reef</option>
+                    <option value="Arctic">Arctic</option>
+                    <option value="Midnight">Midnight</option>
+                    <option value="Sakura Pond">Sakura Pond</option>
+                </select>
+            </div>
+
+            <div className="slider-group mb-15">
+                <label>Cat Breed</label>
+                <select className="custom-select" value={catBreed} onChange={(e) => handleCatBreedChange(e.target.value)}>
+                    <option value="Munchkin">Munchkin (Cream Tabby)</option>
+                    <option value="Scottish Fold">Scottish Fold (Grey)</option>
+                    <option value="Orange Tabby">Orange Tabby (Chaotic)</option>
+                    <option value="Tuxedo">Tuxedo (Formal)</option>
+                    <option value="Siamese">Siamese (Dramatic)</option>
+                </select>
+            </div>
+
+            <div className="slider-group mb-15">
+                <label>Sound Theme</label>
+                <select className="custom-select" value={soundTheme} onChange={(e) => handleSoundThemeChange(e.target.value)}>
+                    <option value="Underwater">Underwater</option>
+                    <option value="Rainy Day">Rainy Day</option>
+                    <option value="Lo-fi Cafe">Lo-fi Cafe</option>
+                    <option value="Forest Stream">Forest Stream</option>
+                    <option value="Deep Ocean">Deep Ocean</option>
+                </select>
+            </div>
+
+            <button className="big-btn theme-btn mt-15" onClick={() => setIsNight(!isNight)}>
                 {isNight ? <Sun size={16} /> : <Moon size={16} />} 
                 {isNight ? " Set to Day" : " Set to Night"}
             </button>
@@ -218,6 +320,12 @@ const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
             </div>
         </div>
       </div>
+
+      {toastMessage && (
+          <div className="toast-notification">
+              {toastMessage}
+          </div>
+      )}
     </>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Camera } from 'lucide-react';
 import './LivingRoom.css';
 import CanvasAquarium from './CanvasAquarium';
 import ControlPanel from './ControlPanel';
@@ -6,9 +7,28 @@ import CatComponent from './CatComponent';
 import WallClock from './WallClock';
 import StudyDesk from './StudyDesk';
 import RoomWindow from './RoomWindow';
+import ArchiveGallery from './ArchiveGallery';
+import { archiveYesterdayTank } from '../lib/db';
 
 const LivingRoom: React.FC = () => {
   const [isNight, setIsNight] = useState(false);
+  const [isArchiveOpen, setIsArchiveOpen] = useState(false);
+  const [theme, setTheme] = useState(localStorage.getItem('toca_theme') || 'Ocean');
+  const [rippling, setRippling] = useState(false);
+
+  useEffect(() => {
+    // Run daily archive check on mount
+    archiveYesterdayTank();
+
+    const handleThemeChange = ((e: CustomEvent) => {
+        setRippling(true);
+        setTimeout(() => setRippling(false), 1500);
+        setTheme(e.detail.theme);
+    }) as EventListener;
+    
+    window.addEventListener('aquarium:theme_change', handleThemeChange);
+    return () => window.removeEventListener('aquarium:theme_change', handleThemeChange);
+  }, []);
 
   useEffect(() => {
     if (isNight) {
@@ -36,7 +56,8 @@ const LivingRoom: React.FC = () => {
         <div className="aquarium-glow"></div>
         {/* The Black Frame & Canvas */}
         <div className="aquarium-frame">
-          <div className="aquarium-glass">
+          <div className={`aquarium-glass theme-${theme.toLowerCase().replace(' ', '-')}`}>
+            <div className={`theme-ripple ${rippling ? 'active' : ''}`}></div>
             <CanvasAquarium />
           </div>
           <div className="aquarium-hood"></div>
@@ -68,6 +89,18 @@ const LivingRoom: React.FC = () => {
 
       {/* Controls */}
       <ControlPanel isNight={isNight} setIsNight={setIsNight} />
+      
+      {/* Archive Button (Vintage Photo Frame) */}
+      <div className="archive-trigger-frame" onClick={() => setIsArchiveOpen(true)}>
+          <div className="frame-wood">
+              <div className="frame-inner">
+                 <span className="frame-icon">📸</span>
+              </div>
+          </div>
+          <div className="frame-label">Archive</div>
+      </div>
+
+      <ArchiveGallery isOpen={isArchiveOpen} onClose={() => setIsArchiveOpen(false)} />
     </div>
   );
 };

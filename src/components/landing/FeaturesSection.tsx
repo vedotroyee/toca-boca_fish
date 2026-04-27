@@ -6,7 +6,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const features = [
   { id: 1, title: 'Fish that fear your cursor', desc: 'Watch them dart away when you get close.', color: '#ff7f50', bg: '#ffe5db', image: '/images/feature_1.png' },
-  { id: 2, title: 'A munchkin cat who visits', desc: 'Sometimes you just need a buddy to tap the glass.', color: '#20b2aa', bg: '#e0f4f3', image: '/images/feature_2.png' },
+  { id: 2, title: 'A munchkin cat who visits', desc: "Loop-complete break reminder — the cat comes when you've earned it.", color: '#20b2aa', bg: '#e0f4f3', image: '/images/feature_2.png' },
   { id: 3, title: 'Earn fish by focusing', desc: 'Work hard, get rewarded with new species.', color: '#b19cd9', bg: '#f2edfa', image: '/images/feature_3.png' },
   { id: 4, title: 'Real-time cat clock', desc: 'A cozy analog companion judging your time.', color: '#ffbf00', bg: '#fff2cc', image: '/images/feature_4.png' },
   { id: 5, title: 'Feed your fish', desc: 'Drop pellets and watch them go crazy.', color: '#ff69b4', bg: '#ffe1ef', image: '/images/feature_5.png' },
