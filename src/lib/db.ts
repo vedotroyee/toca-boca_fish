@@ -1,4 +1,5 @@
 import { supabase, isMockSupabase } from './supabase';
+import { getTodayInUserTimezone } from './dateUtils';
 
 export interface TankSnapshot {
   id: string;
@@ -95,5 +96,80 @@ export const togglePinArchive = async (id: string, pinned: boolean) => {
 
   if (!isMockSupabase) {
     await supabase.from('archives').update({ pinned }).eq('id', id);
+  }
+};
+
+// 1. Get or create today's tank
+export const getTodayTank = async (userId: string, timezone: string) => {
+  const today = getTodayInUserTimezone(timezone);
+  
+  let { data } = await supabase
+    .from('daily_tanks')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('date', today)
+    .single();
+
+  if (!data) {
+    // New day = new empty tank
+    const { data: newTank } = await supabase
+      .from('daily_tanks')
+      .insert({ user_id: userId, date: today, fish_list: [] })
+      .select().single();
+    return newTank;
+  }
+  return data;
+};
+
+// 2. Save tank state (call this every few minutes + on tab close)
+export const saveTankState = async (userId: string, timezone: string, tankData: any) => {
+  const today = getTodayInUserTimezone(timezone);
+  await supabase
+    .from('daily_tanks')
+    .upsert({
+      user_id: userId,
+      date: today,
+      ...tankData,
+      snapshot_data: tankData
+    });
+};
+
+// 3. Get archive (all past days)
+export const getArchive = async (userId: string) => {
+  const { data } = await supabase
+    .from('daily_tanks')
+    .select('*')
+    .eq('user_id', userId)
+    .order('date', { ascending: false });
+  return data;
+};
+
+// 4. Log a completed focus session
+export const logSession = async (userId: string, timezone: string, minutes: number, loops: number) => {
+  const today = getTodayInUserTimezone(timezone);
+  await supabase.from('focus_sessions').insert({
+    user_id: userId,
+    date: today,
+    started_at: new Date().toISOString(),
+    duration_minutes: minutes,
+    loops_completed: loops
+  });
+  
+  // Also update daily tank stats
+  const { data: tank } = await supabase
+    .from('daily_tanks')
+    .select('loops_completed, focus_minutes')
+    .eq('user_id', userId)
+    .eq('date', today)
+    .single();
+
+  if (tank) {
+    await supabase.from('daily_tanks')
+      .update({ 
+        loops_completed: (tank.loops_completed || 0) + loops,
+        focus_minutes: (tank.focus_minutes || 0) + minutes
+      })
+      .eq('user_id', userId)
+      .eq('date', today);
   }
 };

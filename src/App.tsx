@@ -20,6 +20,8 @@ function App() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         navigate('/login');
+      } else {
+        await supabase.from('profiles').upsert({ id: session.user.id, email: session.user.email });
       }
       setLoading(false);
     };

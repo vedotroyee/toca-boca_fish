@@ -28,10 +28,21 @@ const CanvasAquarium: React.FC = () => {
         }
     }
 
-    const saveState = () => {
+    const saveState = async () => {
         const types = newEngine.fishes.map(f => f.type);
         const theme = localStorage.getItem('toca_theme') || 'Ocean';
-        import('../lib/db').then(({ saveCurrentTankState }) => saveCurrentTankState(types, theme));
+        
+        const { supabase } = await import('../lib/supabase');
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session) {
+            const { saveTankState } = await import('../lib/db');
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            await saveTankState(session.user.id, timezone, {
+                fish_list: types,
+                theme: theme
+            });
+        }
     };
 
     const handleFeed = () => {
@@ -62,8 +73,16 @@ const CanvasAquarium: React.FC = () => {
     window.addEventListener('aquarium:add_fish', handleFishAdded);
     window.addEventListener('aquarium:add_timer_fish', handleFishAdded);
 
+    const saveInterval = setInterval(saveState, 2 * 60 * 1000);
+    const handleBeforeUnload = () => {
+        saveState();
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
     return () => {
       newEngine.stop();
+      clearInterval(saveInterval);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
       window.removeEventListener('aquarium:feed', handleFeed);
       window.removeEventListener('audio:ambience', handleVolume);
       window.removeEventListener('aquarium:sound_theme_change', handleSoundTheme);
