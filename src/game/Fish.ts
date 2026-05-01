@@ -117,6 +117,20 @@ export class Fish {
         this.size = 14;
         this.numSegments = 3;
         break;
+      case 'Guppy':
+        this.color = '#8ae0c1';
+        this.finColor = '#5cb898';
+        this.maxSpeed = 3.5;
+        this.size = 8;
+        this.numSegments = 4;
+        break;
+      case 'Oarfish':
+        this.color = '#e4e4e4';
+        this.finColor = '#ff4d4d'; // Red crest/fins
+        this.maxSpeed = 1.0;
+        this.size = 18;
+        this.numSegments = 12; // Very long
+        break;
       case 'Clownfish':
       default:
         this.color = '#ff8c42'; 
@@ -135,10 +149,29 @@ export class Fish {
   update() {
     if (this.isArrival) {
        // Swim straight in gracefully
-       if (performance.now() - this.arrivalTime < 2000) {
-           this.velocity.setMag(1.2);
+       if (this.type === 'Oarfish') {
+           // Oarfish slowly swims all the way across
+           if (performance.now() - this.arrivalTime < 15000) {
+               this.velocity.setMag(1.5);
+           } else {
+               this.isArrival = false;
+           }
        } else {
-           this.isArrival = false; // Normal behaviour resumes
+           if (performance.now() - this.arrivalTime < 2000) {
+               this.velocity.setMag(1.2);
+               if (this.type === 'Clownfish') {
+                   // Spin entry (approximate by heading change)
+                   const angle = this.velocity.heading() + 0.1;
+                   const mag = this.velocity.mag();
+                   this.velocity.x = Math.cos(angle) * mag;
+                   this.velocity.y = Math.sin(angle) * mag;
+               } else if (this.type === 'Betta') {
+                   // Slower entry
+                   this.velocity.setMag(0.5);
+               }
+           } else {
+               this.isArrival = false; // Normal behaviour resumes
+           }
        }
        this.position.add(this.velocity);
        this.updateSegments();
@@ -147,6 +180,26 @@ export class Fish {
 
     this.velocity.add(this.acceleration);
     this.velocity.limit(this.maxSpeed);
+
+    // Contextual weather/location physics
+    const weather = (window as any).currentWeather;
+    if (weather) {
+        if (weather.state === 'Rainy' || weather.state === 'Thunderstorm') {
+             // Swim slower
+             this.velocity.limit(this.maxSpeed * 0.5);
+             // Huddle force (seek center bottom roughly)
+             // Canvas height is roughly window height, we'll just push them down gently
+             this.velocity.add(new Vector2(0, 0.05)); 
+        } else if (!weather.isReal) {
+             if (weather.city === 'Moon') {
+                  this.velocity.limit(this.maxSpeed * 0.4);
+                  this.velocity.add(new Vector2(0, -0.02)); // Float up slightly
+             } else if (weather.city === 'Mars') {
+                  this.velocity.limit(this.maxSpeed * 0.7);
+             }
+        }
+    }
+
     this.position.add(this.velocity);
     this.acceleration.mult(0); // reset acceleration
     
@@ -292,6 +345,21 @@ export class Fish {
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
 
+    const weather = (window as any).currentWeather;
+    const isDeepSpace = weather && !weather.isReal && weather.city === 'Deep Space';
+    const isSun = weather && !weather.isReal && weather.city === 'Inside the Sun';
+
+    if (isDeepSpace) {
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = this.finColor;
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1;
+    }
+    if (isSun) {
+        ctx.fillStyle = '#cc2a00';
+        ctx.shadowBlur = 0;
+    }
+
     // 1. Draw Fins (attach to segment 1 or 2)
     const midIdx = Math.floor(this.numSegments / 2);
     const midSeg = this.segments[midIdx] || this.segments[0];
@@ -303,7 +371,7 @@ export class Fish {
        this.drawBettaFins(ctx, midSeg);
     } else {
        // generic fins (top and bottom)
-       ctx.fillStyle = this.finColor;
+       ctx.fillStyle = isSun ? '#cc2a00' : this.finColor;
        ctx.save();
        ctx.translate(midSeg.pos.x, midSeg.pos.y);
        ctx.rotate(midSeg.angle);
@@ -311,10 +379,12 @@ export class Fish {
        ctx.moveTo(-this.size * 0.3, -this.size * 0.3);
        ctx.quadraticCurveTo(-this.size * 0.5, -this.size * 1.5, this.size * 0.2, -this.size * 0.3);
        ctx.fill();
+       if (isDeepSpace) ctx.stroke();
        ctx.beginPath();
        ctx.moveTo(-this.size * 0.3, this.size * 0.3);
        ctx.quadraticCurveTo(-this.size * 0.5, this.size * 1.5, this.size * 0.2, this.size * 0.3);
        ctx.fill();
+       if (isDeepSpace) ctx.stroke();
        ctx.restore();
     }
 
@@ -341,11 +411,10 @@ export class Fish {
                 rX += (this.inflationSize * 0.8) * sizeMultiplier; // Swell up like a balloon
             }
 
-            // Draw segment
             ctx.save();
             ctx.translate(seg.pos.x, seg.pos.y);
             ctx.rotate(seg.angle);
-            ctx.fillStyle = (i === this.numSegments - 1) ? this.finColor : this.color;
+            ctx.fillStyle = isSun ? '#cc2a00' : ((i === this.numSegments - 1) ? this.finColor : this.color);
             ctx.beginPath();
             
             if (i === this.numSegments - 1) {
@@ -357,10 +426,12 @@ export class Fish {
                 ctx.lineTo(-rX * 2, tailSpread);
                 ctx.closePath();
                 ctx.fill();
+                if (isDeepSpace) ctx.stroke();
             } else {
                 // Body chunk
                 ctx.ellipse(0, 0, rX, rY, 0, 0, Math.PI * 2);
                 ctx.fill();
+                if (isDeepSpace) ctx.stroke();
 
                 // Pufferfish spikes
                 if (this.type === 'Pufferfish' && this.inflationSize > 5 && i === 1) {
@@ -389,22 +460,24 @@ export class Fish {
     }
 
     // 3. Draw Eyes (on first segment)
-    const head = this.segments[0];
-    ctx.save();
-    ctx.translate(head.pos.x, head.pos.y);
-    ctx.rotate(head.angle);
-    
-    ctx.fillStyle = 'white';
-    ctx.beginPath();
-    ctx.arc(this.size * 0.4, -this.size * 0.25, Math.max(3, this.size * 0.2), 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.fillStyle = this.eyeColor;
-    ctx.beginPath();
-    ctx.arc(this.size * 0.5, -this.size * 0.25, Math.max(1, this.size * 0.1), 0, Math.PI * 2);
-    ctx.fill();
-    
-    ctx.restore();
+    if (!isSun) {
+        const head = this.segments[0];
+        ctx.save();
+        ctx.translate(head.pos.x, head.pos.y);
+        ctx.rotate(head.angle);
+        
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(this.size * 0.4, -this.size * 0.25, Math.max(3, this.size * 0.2), 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = this.eyeColor;
+        ctx.beginPath();
+        ctx.arc(this.size * 0.5, -this.size * 0.25, Math.max(1, this.size * 0.1), 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.restore();
+    }
 
     this.drawHungerState(ctx);
 
@@ -514,47 +587,48 @@ export class Fish {
   drawArrivalEffects(ctx: CanvasRenderingContext2D) {
       const timeElapsed = performance.now() - this.arrivalTime;
       
-      // Sparkles burst for first 1 second
-      if (timeElapsed < 1000) {
-          ctx.save();
-          // We must undo rotation from Fish's main draw if it was rotated, but drawArrivalEffects 
-          // is called from inside fish's ctx.restore state? No, we called it inside draw, but after restore? 
-          // Wait, draw() saves then does stuff. At the end it restores. Oh, I put drawArrivalEffects BEFORE ctx.restore().
-          // Wait, no, the main draw() does ctx.save() at the start.
-          // Let's just translate to position here, but without the segment's rotation.
-          ctx.restore(); // pop the main draw's save first
-          
+      // Sparkles burst for first 1 second (Goldfish only)
+      if (this.type === 'Goldfish' && timeElapsed < 1000) {
+          ctx.restore(); 
           ctx.save();
           ctx.translate(this.position.x, this.position.y);
           
-          for(let i=0; i<4; i++) {
-              const angle = (Math.PI * 2 / 4) * i + timeElapsed * 0.005;
-              const dist = 20 + (timeElapsed / 1000) * 30; // expand outwards
+          for(let i=0; i<6; i++) {
+              const angle = (Math.PI * 2 / 6) * i + timeElapsed * 0.005;
+              const dist = 20 + (timeElapsed / 1000) * 40; 
               const opacity = 1 - (timeElapsed / 1000);
               ctx.globalAlpha = opacity;
               
-              ctx.fillStyle = '#00d2d3'; // teal
-              ctx.beginPath();
-              ctx.arc(Math.cos(angle) * dist, Math.sin(angle) * dist, 3, 0, Math.PI*2);
-              ctx.fill();
-              
               ctx.fillStyle = '#feca57'; // gold
               ctx.beginPath();
-              ctx.arc(Math.cos(angle + 0.5) * dist * 0.8, Math.sin(angle + 0.5) * dist * 0.8, 2, 0, Math.PI*2);
+              ctx.arc(Math.cos(angle) * dist, Math.sin(angle) * dist, 4, 0, Math.PI*2);
               ctx.fill();
           }
           ctx.restore();
-          
-          // Re-save to balance the restore at the very end of draw()
           ctx.save(); 
       }
 
-      // Speech bubble "Hi!" or species name
-      // Floats above for 2 seconds
-      if (timeElapsed < 2000) {
-          const opacity = timeElapsed < 1500 ? 1 : 1 - ((timeElapsed - 1500) / 500);
+      // Speech bubble
+      let bubbleText = "Hi!";
+      let bubbleDuration = 2000;
+      if (this.type === 'Guppy') bubbleText = "Zoom!";
+      if (this.type === 'Neon') bubbleText = "We're here!";
+      if (this.type === 'Clownfish') bubbleText = "Wheee!";
+      if (this.type === 'Betta') bubbleText = "Elegance...";
+      if (this.type === 'Goldfish') bubbleText = "I've arrived.";
+      if (this.type === 'Angelfish') bubbleText = "Make way.";
+      if (this.type === 'Discus') bubbleText = "Party!";
+      if (this.type === 'Jellyfish') bubbleText = "...";
+      if (this.type === 'Oarfish') {
+          bubbleText = "I am ancient.";
+          bubbleDuration = 4000;
+      }
+
+      if (timeElapsed < bubbleDuration) {
+          const fadeStart = bubbleDuration - 500;
+          const opacity = timeElapsed < fadeStart ? 1 : 1 - ((timeElapsed - fadeStart) / 500);
           
-          ctx.restore(); // pop the main draw's save
+          ctx.restore(); 
           ctx.save();
           ctx.globalAlpha = opacity;
           ctx.translate(this.position.x, this.position.y - this.size * 2 - 15);
@@ -567,10 +641,9 @@ export class Fish {
           ctx.lineTo(5, -5);
           ctx.fill();
           
-          // Bubble body (pill shape)
-          const text = "Hi!";
+          // Bubble body
           ctx.font = 'bold 12px Nunito, sans-serif';
-          const textWidth = ctx.measureText(text).width;
+          const textWidth = ctx.measureText(bubbleText).width;
           const pad = 8;
           ctx.beginPath();
           ctx.ellipse(0, -15, textWidth/2 + pad, 12, 0, 0, Math.PI * 2);
@@ -579,10 +652,10 @@ export class Fish {
           ctx.fillStyle = '#5c4f44';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText(text, 0, -14);
+          ctx.fillText(bubbleText, 0, -14);
           
           ctx.restore();
-          ctx.save(); // keep balanced
+          ctx.save();
       }
   }
 }

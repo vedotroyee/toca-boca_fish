@@ -106,7 +106,7 @@ export class AudioEngine {
               setTimeout(() => {
                   this._startAmbience();
                   // Fade back in
-                  if (this.ambienceGain) {
+                  if (this.ambienceGain && this.ctx) {
                       this.ambienceGain.gain.setValueAtTime(0.01, this.ctx.currentTime);
                       this.ambienceGain.gain.linearRampToValueAtTime(currentVol, this.ctx.currentTime + 1);
                   }

@@ -10,3 +10,90 @@
   height: 100%;
   touch-action: none; /* prevent scrolling when touching canvas */
 }
+
+/* Jellyfish Glow Effect */
+.jellyfish-glow {
+  position: relative;
+}
+.jellyfish-glow::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at top, rgba(0, 100, 255, 0.2) 0%, rgba(0, 0, 50, 0.4) 100%);
+  pointer-events: none;
+  animation: glowIn 4s ease-in-out forwards;
+}
+
+@keyframes glowIn {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Legendary Badge */
+.legendary-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  pointer-events: none;
+  animation: popBadge 3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.badge-content {
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  padding: 20px 40px;
+  border-radius: 20px;
+  border: 4px solid #fff;
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5), inset 0 5px 15px rgba(255, 255, 255, 0.5);
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.badge-content h2 {
+  font-size: 32px;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 2px;
+}
+.badge-content p {
+  margin: 5px 0 0 0;
+  font-weight: bold;
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+@keyframes popBadge {
+  0% { transform: translate(-50%, -50%) scale(0) rotate(-10deg); opacity: 0; }
+  15% { transform: translate(-50%, -50%) scale(1.1) rotate(5deg); opacity: 1; }
+  30% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  80% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-50%, -100%) scale(0.5); opacity: 0; }
+}
+
+/* Confetti */
+.confetti-container {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 50;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 20px;
+  background: #ff6b6b;
+  opacity: 0;
+  animation: fall 2s linear forwards;
+}
+
+@keyframes fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}

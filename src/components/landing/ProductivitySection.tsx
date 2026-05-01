@@ -103,7 +103,7 @@ export default function ProductivitySection() {
           ].map((stat, i) => (
             <div 
               key={stat.id}
-              ref={el => cardsRef.current[i] = el}
+              ref={(el) => { if (el) cardsRef.current[i] = el; }}
               style={{
                 backgroundColor: '#fff5e6',
                 border: '2px solid rgba(255,127,80,0.2)',

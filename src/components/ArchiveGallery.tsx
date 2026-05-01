@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Heart, Maximize2 } from 'lucide-react';
+import { X, Heart } from 'lucide-react';
 import { getArchives, togglePinArchive } from '../lib/db';
 import type { TankSnapshot } from '../lib/db';
 import './ArchiveGallery.css';
@@ -57,8 +57,9 @@ const ArchiveGallery: React.FC<Props> = ({ isOpen, onClose }) => {
               </div>
             ) : (
               archives.map(arc => (
-                <div key={arc.id} className="archive-card" onClick={() => setSelectedSnapshot(arc)}>
+                <div key={arc.id} className={`archive-card ${arc.isGolden ? 'golden-card' : ''}`} onClick={() => setSelectedSnapshot(arc)}>
                   <div className={`archive-thumb theme-${arc.theme.toLowerCase()}`}>
+                     {arc.isGolden && <div className="golden-star-badge">🌟</div>}
                      {/* Simplified visual representation */}
                      <div className="thumb-stats">
                         <span>🐟 {arc.fishes.length}</span>
@@ -85,9 +86,10 @@ const ArchiveGallery: React.FC<Props> = ({ isOpen, onClose }) => {
       {/* Snapshot Detail View Overlay */}
       {selectedSnapshot && (
          <div className="snapshot-overlay" onClick={() => setSelectedSnapshot(null)}>
-            <div className="snapshot-container" onClick={e => e.stopPropagation()}>
+            <div className={`snapshot-container ${selectedSnapshot.isGolden ? 'golden-container' : ''}`} onClick={e => e.stopPropagation()}>
                 <button className="snapshot-close-btn" onClick={() => setSelectedSnapshot(null)}><X size={24} /></button>
                 <div className={`snapshot-view theme-${selectedSnapshot.theme.toLowerCase()}`}>
+                    {selectedSnapshot.isGolden && <div className="golden-star-badge large">🌟</div>}
                     <div className="snapshot-vignette"></div>
                     <div className="snapshot-water-ripple"></div>
                     

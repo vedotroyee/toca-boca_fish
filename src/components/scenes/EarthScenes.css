@@ -1,0 +1,108 @@
+/* =========================================================
+   EARTH SCENES BACKGROUND IMAGES
+========================================================= */
+
+.bg-image-scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 1s ease-in-out;
+}
+
+/* Day Background image assignments */
+.paris-day-bg { background-image: url('/scenes/paris.png'); }
+.japan-day-bg { background-image: url('/scenes/japan.png'); }
+.kolkata-day-bg { background-image: url('/scenes/kolkata.png'); }
+.iceland-day-bg { background-image: url('/scenes/iceland.png'); }
+.sahara-day-bg { background-image: url('/scenes/sahara.png'); }
+.london-day-bg { background-image: url('/scenes/london.png'); }
+.canada-day-bg { background-image: url('/scenes/canada.png'); }
+
+/* Night Background image assignments */
+.paris-night-bg { background-image: url('/scenes/paris_night.png'); }
+.japan-night-bg { background-image: url('/scenes/japan_night.png'); }
+.kolkata-night-bg { background-image: url('/scenes/kolkata_night.png'); }
+.iceland-night-bg { background-image: url('/scenes/iceland_night.png'); }
+.sahara-night-bg { background-image: url('/scenes/sahara_night.png'); }
+.london-night-bg { background-image: url('/scenes/london_night.png'); }
+.canada-night-bg { background-image: url('/scenes/canada_night.png'); }
+
+/* =========================================================
+   FOREGROUND OVERLAYS & ANIMATIONS
+========================================================= */
+
+/* JAPAN */
+.tokyo-blossom {
+  position: absolute;
+  width: 10px; height: 10px; background: #ffb7c5; border-radius: 50% 0 50% 50%;
+  animation: fallBlossom 8s linear infinite;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+/* ICELAND */
+.iceland-aurora {
+  position: absolute;
+  top: 0; width: 200%; height: 150px;
+  background: linear-gradient(90deg, rgba(46,204,113,0), rgba(46,204,113,0.5), rgba(155,89,182,0.5), rgba(46,204,113,0));
+  filter: blur(20px);
+  animation: auroraDance 20s infinite alternate ease-in-out;
+  pointer-events: none;
+}
+
+/* SAHARA */
+.heat-shimmer {
+  position: absolute;
+  bottom: 0; left: 0; width: 100%; height: 60px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.2), transparent);
+  animation: heatWaver 3s infinite alternate ease-in-out;
+  pointer-events: none;
+}
+
+/* LONDON */
+.london-rain {
+  position: absolute;
+  width: 1px; height: 30px; background: rgba(255,255,255,0.5);
+  animation: rainDrop 0.8s linear infinite;
+  z-index: 10;
+}
+
+/* CANADA */
+.canada-leaf {
+  position: absolute;
+  width: 15px; height: 15px;
+  background: #e74c3c;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  animation: fallLeaf 10s linear infinite;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+/* ANIMATIONS */
+@keyframes fallBlossom {
+  0% { transform: translate(0, -20px) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translate(-100px, 400px) rotate(360deg); opacity: 0; }
+}
+@keyframes auroraDance {
+  0% { transform: translateX(0) scaleY(1); opacity: 0.6; }
+  100% { transform: translateX(-50%) scaleY(1.5); opacity: 0.9; }
+}
+@keyframes heatWaver {
+  0% { transform: translateY(0) scaleY(1); opacity: 0.3; }
+  100% { transform: translateY(-5px) scaleY(1.2); opacity: 0.6; }
+}
+@keyframes rainDrop {
+  0% { transform: translateY(-20px) rotate(15deg); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(400px) rotate(15deg); opacity: 0; }
+}
+@keyframes fallLeaf {
+  0% { transform: translate(0, -20px) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translate(60px, 400px) rotate(720deg); opacity: 0; }
+}

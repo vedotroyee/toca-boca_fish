@@ -29,7 +29,7 @@ html, body {
 /* Base landing page scope to avoid messing up the app */
 .landing-page {
   font-family: 'Nunito', sans-serif;
-  color: #333;
+  color: #111; /* Extremely dark for high contrast */
   overflow-x: hidden;
   cursor: none; /* Custom cursor */
   background: linear-gradient(
@@ -140,7 +140,7 @@ html, body {
   width: 90%;
   max-width: 800px;
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: 50px;
@@ -149,14 +149,16 @@ html, body {
   align-items: center;
   z-index: 100;
   transition: all 0.3s ease;
-  border: 1px solid rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,255,0.2);
   box-shadow: 0 4px 20px rgba(0,0,0,0.05);
 }
 
 .landing-nav.scrolled {
   width: 80%;
   padding: 8px 24px;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
 .nav-brand {
@@ -165,8 +167,13 @@ html, body {
   gap: 8px;
   font-weight: 800;
   font-size: 1.2rem;
-  color: #1a4a4a;
+  color: #fdf6ec;
   text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.landing-nav.scrolled .nav-brand {
+  color: #1a4a4a;
 }
 
 .nav-links {
@@ -177,9 +184,13 @@ html, body {
 .nav-links a {
   text-decoration: none;
   font-weight: 700;
+  color: #fdf6ec;
+  opacity: 0.9;
+  transition: opacity 0.2s, color 0.3s ease;
+}
+
+.landing-nav.scrolled .nav-links a {
   color: #1a4a4a;
-  opacity: 0.8;
-  transition: opacity 0.2s;
 }
 
 .nav-links a:hover {

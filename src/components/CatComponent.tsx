@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import type { WeatherData } from '../lib/weather';
 import './CatComponent.css';
 
 const CatComponent: React.FC = () => {
-  const [catState, setCatState] = useState<'IDLE' | 'WALKING' | 'CLIMBING' | 'WATCHING' | 'TAPPING' | 'CLIMBING_DOWN' | 'RETURNING' | 'SURPRISED' | 'ENTHUSIASTIC_TAPPING' | 'EATING' | 'WATCHING_BREAK'>('IDLE');
+  const [catState, setCatState] = useState<'IDLE' | 'WALKING' | 'CLIMBING' | 'WATCHING' | 'TAPPING' | 'CLIMBING_DOWN' | 'RETURNING' | 'SURPRISED' | 'ENTHUSIASTIC_TAPPING' | 'EATING' | 'WATCHING_BREAK' | 'PERK_UP' | 'FALLING_OFF_SOFA' | 'HEATWAVE_SPRAWL' | 'THUNDERSTORM_HIDING' | 'SPACE_HYPNOTIZED' | 'ZERO_GRAVITY_FLOAT'>('IDLE');
   const [breed, setBreed] = useState(localStorage.getItem('toca_cat_breed') || 'Munchkin');
 
   useEffect(() => {
@@ -100,17 +101,60 @@ const CatComponent: React.FC = () => {
         }
     }) as EventListener;
 
+    const handleDiscusReward = () => {
+        if (catState === 'IDLE' || catState === 'WATCHING') {
+            const prevState = catState;
+            setCatState('PERK_UP');
+            setTimeout(() => {
+                setCatState(prevState);
+            }, 4000);
+        }
+    };
+
+    const handleLegendaryReward = () => {
+        setCatState('FALLING_OFF_SOFA');
+        setTimeout(() => {
+            // Reset to IDLE after it falls
+            setCatState('IDLE');
+        }, 5000);
+    };
+
+    const handleWeatherUpdate = ((e: CustomEvent) => {
+        const weather = e.detail as WeatherData;
+        if (weather.state === 'Hot') {
+             setCatState('HEATWAVE_SPRAWL');
+        } else if (weather.state === 'Thunderstorm') {
+             setCatState('THUNDERSTORM_HIDING');
+        } else if (!weather.isReal) {
+             if (weather.city === 'Deep Space') {
+                 setCatState('SPACE_HYPNOTIZED');
+             } else if (weather.city === 'Moon') {
+                 setCatState('ZERO_GRAVITY_FLOAT');
+             } else {
+                 setCatState('IDLE');
+             }
+        } else {
+             setCatState('IDLE');
+        }
+    }) as EventListener;
+
     window.addEventListener('aquarium:cat', handleCatSummon);
     window.addEventListener('aquarium:cat_notice', handleCatNotice);
     window.addEventListener('aquarium:loop_complete', handleLoopComplete);
     window.addEventListener('aquarium:break_end', handleBreakEnd);
     window.addEventListener('aquarium:cat_breed_change', handleBreedChange);
+    window.addEventListener('aquarium:discus_reward', handleDiscusReward);
+    window.addEventListener('aquarium:legendary_reward', handleLegendaryReward);
+    window.addEventListener('weather:update', handleWeatherUpdate);
     return () => {
       window.removeEventListener('aquarium:cat', handleCatSummon);
       window.removeEventListener('aquarium:cat_notice', handleCatNotice);
       window.removeEventListener('aquarium:loop_complete', handleLoopComplete);
       window.removeEventListener('aquarium:break_end', handleBreakEnd);
       window.removeEventListener('aquarium:cat_breed_change', handleBreedChange);
+      window.removeEventListener('aquarium:discus_reward', handleDiscusReward);
+      window.removeEventListener('aquarium:legendary_reward', handleLegendaryReward);
+      window.removeEventListener('weather:update', handleWeatherUpdate);
     };
   }, [catState]);
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, X, Fish as FishIcon, Droplets, Volume2, Sun, Moon, Cat, Timer, Play, Pause, RotateCcw } from 'lucide-react';
+import { Settings, X, Fish as FishIcon, Droplets, Volume2, Sun, Moon, Cat, Timer, Play, Pause, RotateCcw, Globe } from 'lucide-react';
+import LocationPicker from './LocationPicker';
 import './ControlPanel.css';
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 
 const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false);
 
   // Timer State
   const [timerRunning, setTimerRunning] = useState(false);
@@ -24,16 +26,28 @@ const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
   const [focusTime, setFocusTime] = useState(0); 
   const [fishEarned, setFishEarned] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [earnedFishes, setEarnedFishes] = useState<string[]>([]);
+
+  // Tiers
+  const TIERS = [5, 10, 15, 25, 30, 45, 60, 90, 120];
+  const FISH_REWARDS: Record<number, {name: string, type: string, count: number}> = {
+    5: {name: 'Guppy', type: 'Guppy', count: 1},
+    10: {name: 'Neon Tetra', type: 'Neon', count: 3},
+    15: {name: 'Clownfish', type: 'Clownfish', count: 1},
+    25: {name: 'Betta Fish', type: 'Betta', count: 1},
+    30: {name: 'Goldfish', type: 'Goldfish', count: 1},
+    45: {name: 'Angelfish', type: 'Angelfish', count: 1},
+    60: {name: 'Discus Fish', type: 'Discus', count: 1},
+    90: {name: 'Jellyfish', type: 'Jellyfish', count: 1},
+    120: {name: 'Giant Oarfish', type: 'Oarfish', count: 1},
+  };
 
   // Customization
   const [tankTheme, setTankTheme] = useState(localStorage.getItem('toca_theme') || 'Ocean');
   const [catBreed, setCatBreed] = useState(localStorage.getItem('toca_cat_breed') || 'Munchkin');
   const [soundTheme, setSoundTheme] = useState(localStorage.getItem('toca_sound_theme') || 'Underwater');
 
-  const randomTimerFish = () => {
-     const types = ['Clownfish', 'Betta', 'Goldfish', 'Angelfish', 'Discus', 'Neon', 'Corydoras'];
-     return types[Math.floor(Math.random() * types.length)];
-  };
+
 
   useEffect(() => {
      const today = new Date().toDateString();
@@ -51,6 +65,7 @@ const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
      setStreak(currentStreak);
      setFocusTime(parseInt(localStorage.getItem('toca_focus_today') || '0'));
      setFishEarned(parseInt(localStorage.getItem('toca_fish_today') || '0'));
+     setEarnedFishes(JSON.parse(localStorage.getItem('toca_earned_fishes') || '[]'));
   }, []);
 
   useEffect(() => {
@@ -78,7 +93,24 @@ const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
                  localStorage.setItem('toca_last_session_date', todayDate);
              }
 
-             window.dispatchEvent(new CustomEvent('aquarium:add_timer_fish', {detail: {type: randomTimerFish()}}));
+             const reward = FISH_REWARDS[intervalMins] || FISH_REWARDS[25];
+             for (let i = 0; i < reward.count; i++) {
+                 setTimeout(() => window.dispatchEvent(new CustomEvent('aquarium:add_timer_fish', {detail: {type: reward.type}})), i * 500);
+             }
+             
+             if (!earnedFishes.includes(reward.type)) {
+                 const newEarned = [...earnedFishes, reward.type];
+                 setEarnedFishes(newEarned);
+                 localStorage.setItem('toca_earned_fishes', JSON.stringify(newEarned));
+             }
+
+             if (intervalMins >= 120) {
+                 window.dispatchEvent(new Event('aquarium:legendary_reward'));
+             } else if (intervalMins >= 90) {
+                 window.dispatchEvent(new Event('aquarium:jellyfish_reward'));
+             } else if (intervalMins >= 60) {
+                 window.dispatchEvent(new Event('aquarium:discus_reward'));
+             }
              
              if (completedIntervals + 1 < totalLoops) {
                  setCompletedIntervals(c => c + 1);
@@ -172,9 +204,16 @@ const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
 
   return (
     <>
-      <button className="panel-trigger" onClick={() => setIsOpen(true)}>
-        <Settings size={24} />
-      </button>
+      <div className="panel-triggers">
+        <button className="panel-trigger" onClick={() => setIsLocationPickerOpen(true)} title="Teleport to a new location">
+          <Globe size={24} />
+        </button>
+        <button className="panel-trigger" onClick={() => setIsOpen(true)}>
+          <Settings size={24} />
+        </button>
+      </div>
+
+      <LocationPicker isOpen={isLocationPickerOpen} onClose={() => setIsLocationPickerOpen(false)} />
 
       <div className={`control-panel ${isOpen ? 'open' : ''}`}>
         <div className="panel-header">
@@ -194,6 +233,8 @@ const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
                <button onClick={() => window.dispatchEvent(new CustomEvent('aquarium:add_fish', {detail: {type: 'Corydoras'}}))}>Corydoras</button>
                <button onClick={() => window.dispatchEvent(new CustomEvent('aquarium:add_fish', {detail: {type: 'Jellyfish'}}))}>Jellyfish</button>
                <button onClick={() => window.dispatchEvent(new CustomEvent('aquarium:add_fish', {detail: {type: 'Pufferfish'}}))}>Pufferfish</button>
+               <button onClick={() => window.dispatchEvent(new CustomEvent('aquarium:add_fish', {detail: {type: 'Guppy'}}))}>Guppy</button>
+               <button onClick={() => window.dispatchEvent(new CustomEvent('aquarium:add_fish', {detail: {type: 'Oarfish'}}))}>Oarfish</button>
             </div>
             <button className="big-btn feed-btn" onClick={triggerFeed}>
                 <Droplets size={16}/> Feed Fish
@@ -233,7 +274,27 @@ const ControlPanel: React.FC<Props> = ({ isNight, setIsNight }) => {
 
             <div className="slider-group mt-15">
                 <label>Work Interval: {intervalMins} min</label>
-                <input type="range" min="5" max="60" step="5" value={intervalMins} onChange={(e) => handleIntervalChange(parseInt(e.target.value))} />
+                <input type="range" min="0" max={TIERS.length - 1} step="1" value={TIERS.indexOf(intervalMins) === -1 ? 3 : TIERS.indexOf(intervalMins)} onChange={(e) => handleIntervalChange(TIERS[parseInt(e.target.value)])} />
+            </div>
+
+            <div className="fish-legend mt-15">
+                <h4>Reward Tiers</h4>
+                <div className="tier-grid">
+                    {TIERS.map(t => {
+                        const r = FISH_REWARDS[t];
+                        const isUnlocked = earnedFishes.includes(r.type);
+                        return (
+                            <div key={t} className={`tier-item ${isUnlocked ? 'unlocked' : 'locked'}`}>
+                                <div className="tier-icon"><FishIcon size={16}/></div>
+                                <div className="tier-info">
+                                    <span className="tier-time">{t}m</span>
+                                    <span className="tier-name">{r.name}</span>
+                                </div>
+                                {isUnlocked && <div className="tier-check">⭐</div>}
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
 
             <div className="slider-group mt-15">

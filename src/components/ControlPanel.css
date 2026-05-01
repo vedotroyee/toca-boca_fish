@@ -1,7 +1,14 @@
-.panel-trigger {
+.panel-triggers {
   position: absolute;
   top: 20px;
   right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 100;
+}
+
+.panel-trigger {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -11,8 +18,10 @@
   align-items: center;
   justify-content: center;
   color: var(--text-dark);
-  z-index: 100;
   backdrop-filter: blur(8px);
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s;
 }
 .panel-trigger:hover { transform: scale(1.05); }
 
@@ -347,4 +356,69 @@
 @keyframes fadeOut {
   0% { opacity: 1; }
   100% { opacity: 0; visibility: hidden; }
+}
+
+/* Fish Legend */
+.fish-legend {
+  background: rgba(0,0,0,0.03);
+  padding: 12px;
+  border-radius: 12px;
+}
+.fish-legend h4 {
+  font-size: 13px;
+  margin: 0 0 10px 0;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.tier-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+.tier-item {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.4);
+  padding: 6px 10px;
+  border-radius: 8px;
+  gap: 10px;
+  transition: all 0.3s;
+}
+.tier-item.locked {
+  opacity: 0.4;
+  filter: grayscale(100%);
+}
+.tier-item.unlocked {
+  background: rgba(255,255,255,0.8);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.tier-icon {
+  background: var(--panel-bg);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #55c8c5;
+}
+.tier-info {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  align-items: center;
+}
+.tier-time {
+  font-weight: 800;
+  font-size: 12px;
+  width: 40px;
+}
+.tier-name {
+  font-size: 12px;
+  font-weight: 600;
+  flex: 1;
+}
+.tier-check {
+  font-size: 12px;
 }

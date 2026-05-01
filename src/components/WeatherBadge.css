@@ -1,0 +1,88 @@
+.weather-badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 8px 16px 8px 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    z-index: 100;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+.weather-badge.fantasy-badge {
+    background: rgba(40, 40, 60, 0.6);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.weather-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fantasy-badge .weather-icon {
+    background: rgba(0,0,0,0.3);
+}
+
+.weather-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.weather-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.weather-temp {
+    font-weight: 800;
+    font-size: 16px;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-dark);
+    line-height: 1;
+}
+
+.fantasy-badge .weather-temp {
+    color: #fff;
+}
+
+.weather-city {
+    font-size: 11px;
+    font-weight: bold;
+    opacity: 0.8;
+    color: var(--text-dark);
+}
+
+.fantasy-badge .weather-city {
+    color: #fff;
+}
+
+.return-home-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: background 0.2s;
+}
+
+.return-home-btn:hover {
+    background: rgba(255,255,255,0.4);
+}

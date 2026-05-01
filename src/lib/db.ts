@@ -9,6 +9,7 @@ export interface TankSnapshot {
   loopsCompleted: number;
   theme: string;
   pinned: boolean;
+  isGolden?: boolean;
 }
 
 export const saveCurrentTankState = async (fishes: string[], theme: string) => {
@@ -51,6 +52,7 @@ export const archiveYesterdayTank = async () => {
         loopsCompleted: prevTank.loopsCompleted || 0,
         theme: prevTank.theme || 'Ocean',
         pinned: false,
+        isGolden: prevTank.isGolden || false,
       };
       
       archives.push(newArchive);

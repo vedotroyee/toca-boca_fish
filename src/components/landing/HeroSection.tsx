@@ -74,7 +74,7 @@ export default function HeroSection() {
 
       {/* Hero Scene Illustration (SVG) */}
       <div ref={sceneRef} className="hero-scene" style={{ width: '80%', maxWidth: '900px', zIndex: 5 }}>
-        <svg viewBox="0 0 800 400" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: 'auto', dropShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
+        <svg viewBox="0 0 800 400" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: 'auto', filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))' }}>
           {/* Room Background */}
           <rect width="800" height="400" rx="30" fill="#2d5a5a" />
           

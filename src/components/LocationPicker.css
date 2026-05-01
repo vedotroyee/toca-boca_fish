@@ -1,0 +1,221 @@
+.location-picker-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.passport-modal {
+    width: 100%;
+    max-width: 500px;
+    background: #fdf6ec; /* aged paper look */
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    overflow: hidden;
+    animation: modalIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid #e0c9a3;
+}
+
+.passport-modal.teleporting {
+    animation: passportTeleport 1.5s forwards;
+}
+
+@keyframes passportTeleport {
+    0% { transform: scale(1); opacity: 1; filter: brightness(1); }
+    50% { transform: scale(0.9) translateY(-20px); opacity: 0; filter: brightness(2); }
+    100% { transform: scale(0); opacity: 0; }
+}
+
+.passport-modal .close-btn {
+    position: absolute;
+    top: 15px; right: 15px;
+    background: transparent;
+    border: none;
+    color: #8a4b3d;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.passport-modal .close-btn:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.passport-header {
+    background: #4a6fa5;
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+    border-bottom: 4px solid #365585;
+}
+
+.passport-emblem {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.passport-header h2 {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.passport-header p {
+    margin: 5px 0 0 0;
+    font-family: 'Nunito', sans-serif;
+    opacity: 0.8;
+}
+
+.passport-body {
+    padding: 20px;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 2px solid #e0c9a3;
+    border-radius: 30px;
+    padding: 5px 15px;
+    margin-bottom: 20px;
+}
+
+.search-icon {
+    color: #8a4b3d;
+    margin-right: 10px;
+}
+
+.search-bar input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px 0;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    color: #3e505b;
+    outline: none;
+}
+
+.search-bar button {
+    background: #d97757;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 36px; height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.search-bar button:hover {
+    transform: scale(1.1);
+}
+
+.destinations-section {
+    margin-bottom: 25px;
+}
+
+.destinations-section h3 {
+    font-size: 14px;
+    color: #8a4b3d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    border-bottom: 1px dashed #e0c9a3;
+    padding-bottom: 5px;
+}
+
+.destinations-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.dest-btn {
+    background: white;
+    border: 2px solid #e0c9a3;
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.dest-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+    border-color: #d97757;
+}
+
+.dest-icon {
+    font-size: 24px;
+}
+
+.dest-name {
+    font-size: 11px;
+    font-weight: bold;
+    color: #3e505b;
+}
+
+.space-btn {
+    background: #2b2d42;
+    border-color: #4a4e69;
+}
+.space-btn .dest-name {
+    color: white;
+}
+.space-btn:hover {
+    border-color: #8d99ae;
+    background: #3e415a;
+}
+
+.space-section h3 {
+    color: #4a4e69;
+    border-color: #8d99ae;
+}
+
+/* Teleport Transition Effect */
+.teleport-transition {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 3000;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: whiteout 1.5s forwards;
+}
+
+.teleport-icon {
+    color: white;
+    filter: drop-shadow(0 0 20px rgba(255,255,255,0.8));
+    animation: flyAcross 1.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+}
+
+@keyframes whiteout {
+    0% { background: rgba(255,255,255,0); }
+    40% { background: rgba(255,255,255,1); }
+    60% { background: rgba(255,255,255,1); }
+    100% { background: rgba(255,255,255,0); }
+}
+
+@keyframes flyAcross {
+    0% { transform: translate(-50vw, 50vh) rotate(45deg) scale(0.5); opacity: 0; }
+    30% { opacity: 1; }
+    100% { transform: translate(50vw, -50vh) rotate(45deg) scale(2); opacity: 0; }
+}

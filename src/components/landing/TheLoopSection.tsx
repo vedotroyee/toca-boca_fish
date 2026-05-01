@@ -23,7 +23,7 @@ export default function TheLoopSection() {
     });
 
     // Fill the rings sequentially
-    ringsRef.current.forEach((ring, index) => {
+    ringsRef.current.forEach((ring, _) => {
       if (ring) {
         tl.fromTo(ring, 
           { '--progress': '0deg', scale: 0.8, opacity: 0 },
@@ -73,7 +73,7 @@ export default function TheLoopSection() {
           {[1, 2, 3, 4].map((num, i) => (
             <div key={num} style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
               <div 
-                ref={el => ringsRef.current[i] = el}
+                ref={(el) => { if (el) ringsRef.current[i] = el; }}
                 className="loop-ring"
                 style={{
                   width: '80px', height: '80px', borderRadius: '50%',
@@ -132,7 +132,7 @@ export default function TheLoopSection() {
         ].map((pill, i) => (
           <div 
             key={i}
-            ref={el => featurePillsRef.current[i] = el}
+            ref={(el) => { if (el) featurePillsRef.current[i] = el; }}
             style={{
               backgroundColor: 'white',
               padding: '12px 24px',

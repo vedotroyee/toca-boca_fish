@@ -36,8 +36,8 @@ export default function MarqueeSection() {
   return (
     <section className="marquee-section" style={{ backgroundColor: '#fdf6ec', padding: '100px 0', position: 'relative' }}>
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <p style={{ color: '#888', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '0.9rem', marginBottom: '10px' }}>the cast</p>
-        <h2 style={{ fontSize: '3rem', color: '#ff7f50' }}>Meet the residents.</h2>
+        <p style={{ color: '#555', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '0.9rem', marginBottom: '10px', fontWeight: 'bold' }}>the cast</p>
+        <h2 style={{ fontSize: '3rem', color: '#d95a2b' }}>Meet the residents.</h2>
       </div>
 
       <div className="marquee-container top-marquee">

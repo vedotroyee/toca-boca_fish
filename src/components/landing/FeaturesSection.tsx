@@ -53,7 +53,7 @@ export default function FeaturesSection() {
         {features.map((feat, i) => (
           <div 
             key={feat.id}
-            ref={el => cardsRef.current[i] = el}
+            ref={(el) => { cardsRef.current[i] = el; }}
             className="feature-card"
             style={{
               backgroundColor: feat.bg,
@@ -77,8 +77,8 @@ export default function FeaturesSection() {
             }}>
               <img src={feat.image} alt={feat.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
-            <h3 style={{ color: feat.color, fontSize: '1.5rem', marginBottom: '10px' }}>{feat.title}</h3>
-            <p style={{ color: '#555', fontSize: '1.1rem', opacity: 0.8 }}>{feat.desc}</p>
+            <h3 style={{ color: '#4a148c', fontSize: '1.5rem', marginBottom: '10px' }}>{feat.title}</h3>
+            <p style={{ color: '#4a148c', fontSize: '1.1rem', opacity: 0.85 }}>{feat.desc}</p>
           </div>
         ))}
       </div>
